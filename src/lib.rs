@@ -7,7 +7,6 @@
 // https://opensource.org/licenses/Apache-2.0
 
 #![cfg_attr(not(doctest), doc = include_str!("../Readme.md"))]
-
 #![cfg_attr(not(test), no_std)]
 
 mod bme280;
