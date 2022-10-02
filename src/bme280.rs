@@ -90,6 +90,11 @@ where
         Self::new_with_address(i2c, DEFAULT_ADDRESS, delay)
     }
 
+    /// Release the I²C interface
+    pub fn release(self) -> I2C {
+        self.i2c
+    }
+
     /// Create a new sensor using an I²C interface and a delay function
     pub fn new_with_address(i2c: I2C, address: u8, delay: D) -> Self {
         Self::new_with_coefficients(i2c, address, delay, Default::default())
