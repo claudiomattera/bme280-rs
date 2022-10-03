@@ -10,7 +10,7 @@
 #![cfg_attr(not(test), no_std)]
 
 mod bme280;
-pub use crate::bme280::{Bme280, CHIP_ID, DEFAULT_ADDRESS};
+pub use crate::bme280::{Bme280, Sample, CHIP_ID, DEFAULT_ADDRESS};
 
 mod calibration;
 use crate::calibration::CalibrationData;
