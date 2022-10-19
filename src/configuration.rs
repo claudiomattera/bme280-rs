@@ -39,6 +39,7 @@ impl From<&Configuration> for (Config, ControlMeasurement, ControlHumidity) {
 
 impl Configuration {
     #[doc(hidden)]
+    #[must_use]
     pub(crate) fn to_lowlevel_configuration(
         &self,
     ) -> (Config, ControlMeasurement, ControlHumidity) {
@@ -46,12 +47,14 @@ impl Configuration {
     }
 
     /// Set the standby time
+    #[must_use]
     pub fn with_standby_time(mut self, standby_time: StandbyTime) -> Self {
         self.standby_time = standby_time;
         self
     }
 
     /// Set the filter
+    #[must_use]
     pub fn with_filter(mut self, filter: Filter) -> Self {
         self.filter = filter;
         self
@@ -65,24 +68,28 @@ impl Configuration {
     }
 
     /// Set the oversampling factor for temperature
+    #[must_use]
     pub fn with_temperature_oversampling(mut self, temperature_oversampling: Oversampling) -> Self {
         self.temperature_oversampling = temperature_oversampling;
         self
     }
 
     /// Set the oversampling factor for pressure
+    #[must_use]
     pub fn with_pressure_oversampling(mut self, pressure_oversampling: Oversampling) -> Self {
         self.pressure_oversampling = pressure_oversampling;
         self
     }
 
     /// Set the oversampling factor for humidity
+    #[must_use]
     pub fn with_humidity_oversampling(mut self, humidity_oversampling: Oversampling) -> Self {
         self.humidity_oversampling = humidity_oversampling;
         self
     }
 
     /// Set the sensor mode
+    #[must_use]
     pub fn with_sensor_mode(mut self, sensor_mode: SensorMode) -> Self {
         self.sensor_mode = sensor_mode;
         self
