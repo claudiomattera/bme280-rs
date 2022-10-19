@@ -7,7 +7,7 @@
 // https://opensource.org/licenses/Apache-2.0
 
 /// Chip configuration
-#[derive(Copy, Clone, Debug, Default, Eq, PartialEq)]
+#[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Configuration {
     standby_time: StandbyTime,
     filter: Filter,
