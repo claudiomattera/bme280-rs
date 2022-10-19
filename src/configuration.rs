@@ -39,7 +39,9 @@ impl From<&Configuration> for (Config, ControlMeasurement, ControlHumidity) {
 
 impl Configuration {
     #[doc(hidden)]
-    pub fn to_lowlevel_configuration(&self) -> (Config, ControlMeasurement, ControlHumidity) {
+    pub(crate) fn to_lowlevel_configuration(
+        &self,
+    ) -> (Config, ControlMeasurement, ControlHumidity) {
         self.into()
     }
 
@@ -56,7 +58,8 @@ impl Configuration {
     }
 
     #[doc(hidden)]
-    pub fn with_spi3w(mut self, spi3w: bool) -> Self {
+    #[allow(unused)]
+    pub(crate) fn with_spi3w(mut self, spi3w: bool) -> Self {
         self.spi3w = spi3w;
         self
     }
@@ -86,7 +89,7 @@ impl Configuration {
     }
 
     #[doc(hidden)]
-    pub fn is_forced(&self) -> bool {
+    pub(crate) fn is_forced(&self) -> bool {
         self.sensor_mode == SensorMode::Forced
     }
 }
@@ -158,7 +161,7 @@ pub enum Oversampling {
 
 impl Oversampling {
     #[doc(hidden)]
-    pub fn to_value(&self) -> u8 {
+    pub(crate) fn to_value(&self) -> u8 {
         match *self {
             Self::Skip => 0b000,
             Self::Oversample1 => 0b001,
@@ -199,7 +202,7 @@ pub enum SensorMode {
 
 impl SensorMode {
     #[doc(hidden)]
-    pub fn to_value(&self) -> u8 {
+    pub(crate) fn to_value(&self) -> u8 {
         match *self {
             Self::Sleep => 0b00,
             Self::Forced => 0b01,
@@ -244,7 +247,7 @@ pub enum StandbyTime {
 
 impl StandbyTime {
     #[doc(hidden)]
-    pub fn to_value(&self) -> u8 {
+    pub(crate) fn to_value(&self) -> u8 {
         match *self {
             Self::Millis0_5 => 0b000,
             Self::Millis10 => 0b110,
@@ -285,7 +288,7 @@ pub enum Filter {
 
 impl Filter {
     #[doc(hidden)]
-    pub fn to_value(&self) -> u8 {
+    pub(crate) fn to_value(&self) -> u8 {
         match *self {
             Self::Off => 0b000,
             Self::Filter2 => 0b001,
