@@ -14,7 +14,7 @@ Usage
 Add the dependency to `Cargo.toml`.
 
 ~~~~toml
-[dependencies.rinfluxdb]
+[dependencies.bme280]
 version = "0.1.0"
 ~~~~
 
