@@ -12,6 +12,7 @@ pub const SECOND_REGISTER: u8 = 0xe1;
 pub const SECOND_LENGTH: usize = 7;
 pub const TOTAL_LENGTH: usize = FIRST_LENGTH + SECOND_LENGTH;
 
+#[allow(clippy::module_name_repetitions)] // Using a more informative name
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct CalibrationData {
     pub dig_t1: u16,
