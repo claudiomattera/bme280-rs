@@ -38,6 +38,9 @@ pub struct CalibrationData {
 
 impl From<&[u8; TOTAL_LENGTH]> for CalibrationData {
     fn from(data: &[u8; TOTAL_LENGTH]) -> Self {
+        #[allow(clippy::cast_possible_wrap)] // Using documentation
+        let dig_h6 = data[32] as i8;
+
         Self {
             dig_t1: u16::from_le_bytes([data[0], data[1]]),
             dig_t2: i16::from_le_bytes([data[2], data[3]]),
@@ -58,7 +61,7 @@ impl From<&[u8; TOTAL_LENGTH]> for CalibrationData {
             dig_h3: data[28],
             dig_h4: i16::from(data[29]) << 4 | i16::from(data[30]) & 0xF,
             dig_h5: ((i16::from(data[30]) & 0xF0) >> 4) | (i16::from(data[31]) << 4),
-            dig_h6: data[32] as i8,
+            dig_h6,
         }
     }
 }
