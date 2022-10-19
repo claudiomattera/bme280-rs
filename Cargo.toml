@@ -23,4 +23,5 @@ log = { version = "0.4" }
 embedded-hal = { version = "0.2" }
 
 [dev-dependencies]
+assert2 = { version = "0.3" }
 embedded-hal-mock = { version = "0.8" }

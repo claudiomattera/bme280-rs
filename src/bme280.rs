@@ -449,6 +449,8 @@ where
 mod tests {
     use super::*;
 
+    use assert2::check;
+
     use embedded_hal_mock::delay::MockNoop as DelayMock;
     use embedded_hal_mock::i2c::{Mock as I2cMock, Transaction as I2cTransaction};
 
@@ -467,7 +469,7 @@ mod tests {
 
         let chip_id = bme280.chip_id()?;
 
-        assert_eq!(chip_id, CHIP_ID);
+        check!(chip_id == CHIP_ID);
 
         Ok(())
     }
@@ -485,8 +487,8 @@ mod tests {
 
         let status = bme280.status()?;
 
-        assert!(!status.is_measuring());
-        assert!(!status.is_calibrating());
+        check!(!status.is_measuring());
+        check!(!status.is_calibrating());
 
         Ok(())
     }
@@ -504,8 +506,8 @@ mod tests {
 
         let status = bme280.status()?;
 
-        assert!(status.is_measuring());
-        assert!(!status.is_calibrating());
+        check!(status.is_measuring());
+        check!(!status.is_calibrating());
 
         Ok(())
     }
@@ -530,7 +532,7 @@ mod tests {
 
         let temperature = bme280.read_temperature()?;
 
-        assert_eq!(temperature, expected);
+        check!(temperature == expected);
 
         Ok(())
     }
@@ -555,7 +557,7 @@ mod tests {
 
         let temperature = bme280.read_temperature()?;
 
-        assert_eq!(temperature, expected);
+        check!(temperature == expected);
 
         Ok(())
     }
@@ -587,7 +589,7 @@ mod tests {
 
         let pressure = bme280.read_pressure()?;
 
-        assert_eq!(pressure, expected);
+        check!(pressure == expected);
 
         Ok(())
     }
@@ -619,7 +621,7 @@ mod tests {
 
         let pressure = bme280.read_pressure()?;
 
-        assert_eq!(pressure, expected);
+        check!(pressure == expected);
 
         Ok(())
     }
@@ -651,7 +653,7 @@ mod tests {
 
         let humidity = bme280.read_humidity()?;
 
-        assert_eq!(humidity, expected);
+        check!(humidity == expected);
 
         Ok(())
     }
@@ -683,7 +685,7 @@ mod tests {
 
         let humidity = bme280.read_humidity()?;
 
-        assert_eq!(humidity, expected);
+        check!(humidity == expected);
 
         Ok(())
     }

@@ -138,6 +138,8 @@ pub use tests::TEST_CALIBRATION_DATA;
 mod tests {
     use super::*;
 
+    use assert2::check;
+
     pub const TEST_CALIBRATION_DATA: CalibrationData = CalibrationData {
         dig_t1: 0x6fb1_u16,
         dig_t2: 0x6a2e_i16,
@@ -171,7 +173,7 @@ mod tests {
 
         let coefficients = CalibrationData::from(&raw_register_data);
 
-        assert_eq!(coefficients, TEST_CALIBRATION_DATA);
+        check!(coefficients == TEST_CALIBRATION_DATA);
     }
 
     #[test]
@@ -181,7 +183,7 @@ mod tests {
         let actual = TEST_CALIBRATION_DATA.compensate_temperature(adc_t);
         let expected = 0x22391;
 
-        assert_eq!(actual, expected);
+        check!(actual == expected, "0x{:08X} == 0x{:08X}", actual, expected);
     }
 
     #[test]
@@ -192,7 +194,7 @@ mod tests {
         let actual = TEST_CALIBRATION_DATA.compensate_pressure(adc_p, t_fine);
         let expected = 0x018b_663f;
 
-        assert_eq!(actual, expected);
+        check!(actual == expected, "0x{:08X} == 0x{:08X}", actual, expected);
     }
 
     #[test]
@@ -203,6 +205,6 @@ mod tests {
         let actual = TEST_CALIBRATION_DATA.compensate_humidity(adc_h, t_fine);
         let expected = 0x8399;
 
-        assert_eq!(actual, expected);
+        check!(actual == expected, "0x{:08X} == 0x{:08X}", actual, expected);
     }
 }
