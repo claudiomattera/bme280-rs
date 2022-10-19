@@ -24,3 +24,11 @@ repos:
     -   id: check-symlinks
     -   id: destroyed-symlinks
     -   id: no-commit-to-branch
+
+-   repo: https://github.com/doublify/pre-commit-rust
+    rev: v1.0
+    hooks:
+    -   id: fmt
+        name: check Rust source format
+    -   id: cargo-check
+        name: check crate structure
