@@ -6,6 +6,8 @@
 // https://opensource.org/licenses/MIT
 // https://opensource.org/licenses/Apache-2.0
 
+//! Data types and functions for BME280 sensor interface
+
 use log::{debug, warn};
 
 use embedded_hal::blocking::delay::DelayMs;
@@ -20,18 +22,29 @@ pub const DEFAULT_ADDRESS: u8 = 0x76;
 /// Hardcoded chip ID
 pub const CHIP_ID: u8 = 0x60;
 
+/// I²C register for chip ID
 const BME280_REGISTER_CHIPID: u8 = 0xD0;
+/// I²C register for soft reset
 const BME280_REGISTER_SOFTRESET: u8 = 0xE0;
+/// I²C register for humidity configuration
 const BME280_REGISTER_CONTROLHUMID: u8 = 0xF2;
+/// I²C register for chip status
 const BME280_REGISTER_STATUS: u8 = 0xF3;
+/// I²C register for chip control
 const BME280_REGISTER_CONTROL: u8 = 0xF4;
+/// I²C register for chip configuration
 const BME280_REGISTER_CONFIG: u8 = 0xF5;
+/// I²C register for pressure data
 const BME280_REGISTER_PRESSUREDATA: u8 = 0xF7;
+/// I²C register for temperature data
 const BME280_REGISTER_TEMPDATA: u8 = 0xFA;
+/// I²C register for humidity data
 const BME280_REGISTER_HUMIDDATA: u8 = 0xFD;
 
+/// Command for soft reset
 const BME280_COMMAND_SOFTRESET: u8 = 0xB6;
 
+/// Bitmask for sleep mode
 const MODE_SLEEP: u8 = 0b00;
 
 /// A full sample: temperature, pressure and humidity
@@ -72,10 +85,19 @@ type RawSample = (Option<u32>, Option<u32>, Option<u16>);
 /// # Ok::<(), Box<dyn std::error::Error>>(())
 /// ```
 pub struct Bme280<I2c, Delay> {
+    /// I²C device
     i2c: I2c,
+
+    /// I²C address
     address: u8,
+
+    /// Delay function
     delay: Delay,
+
+    /// Calibration coefficients
     coefficients: CalibrationData,
+
+    /// Sensor configuration
     configuration: Configuration,
 }
 
@@ -100,6 +122,7 @@ where
         Self::new_with_coefficients(i2c, address, delay, CalibrationData::default())
     }
 
+    /// Create a new sensor with specific calibration coefficients
     fn new_with_coefficients(
         i2c: I2C,
         address: u8,
@@ -235,6 +258,10 @@ where
         }
     }
 
+    /// Read a raw sample from sensor
+    ///
+    /// Raw sample must be converted to human-readable quantities using
+    /// compensation formulas from the data sheet.
     fn read_raw_sample(&mut self) -> Result<RawSample, E> {
         let buffer: [u8; 1] = [BME280_REGISTER_PRESSUREDATA];
         let mut buf: [u8; 8] = [0; 8];
@@ -293,6 +320,7 @@ where
         }
     }
 
+    /// Compute raw temperature from human-readable temperature
     fn temperature_fine_to_temperature(t_fine: i32) -> f32 {
         let t = (t_fine * 5 + 128) >> 8;
 
@@ -317,12 +345,17 @@ where
         }
     }
 
+    /// Read temperature from sensor
     fn read_temperature_fine(&mut self) -> Result<Option<i32>, E> {
         let adc_t = self.read_raw_temperature()?;
         let t_fine = adc_t.map(|adc_t| self.coefficients.compensate_temperature(adc_t));
         Ok(t_fine)
     }
 
+    /// Read raw temperature from sensor
+    ///
+    /// Raw temperature must be converted to human-readable temperature using
+    /// compensation formulas from the data sheet.
     fn read_raw_temperature(&mut self) -> Result<Option<u32>, E> {
         let adc_t = self.read_u24(BME280_REGISTER_TEMPDATA)?;
 
@@ -370,6 +403,7 @@ where
         self.read_pressure_with_temperature_fine(t_fine)
     }
 
+    /// Read pressure from sensor usings pecific temperature reference
     fn read_pressure_with_temperature_fine(&mut self, t_fine: i32) -> Result<Option<f32>, E> {
         let adc_p = self.read_raw_pressure()?;
         let p = adc_p.map(|adc_p| {
@@ -383,6 +417,10 @@ where
         Ok(p)
     }
 
+    /// Read raw pressure from sensor
+    ///
+    /// Raw pressure must be converted to human-readable pressure using
+    /// compensation formulas from the data sheet.
     fn read_raw_pressure(&mut self) -> Result<Option<u32>, E> {
         let adc_p = self.read_u24(BME280_REGISTER_PRESSUREDATA)?;
 
@@ -430,6 +468,7 @@ where
         self.read_humidity_with_temperature_fine(t_fine)
     }
 
+    /// Read humidity from sensor using specific reference temperature
     fn read_humidity_with_temperature_fine(&mut self, t_fine: i32) -> Result<Option<f32>, E> {
         let adc_h = self.read_raw_humidity()?;
         let h = adc_h.map(|adc_h| {
@@ -443,6 +482,10 @@ where
         Ok(h)
     }
 
+    /// Read raw humidity from sensor
+    ///
+    /// Raw humidity must be converted to human-readable humidity using
+    /// compensation formulas from the data sheet.
     fn read_raw_humidity(&mut self) -> Result<Option<u16>, E> {
         let adc_h = self.read_u16(BME280_REGISTER_HUMIDDATA)?;
 
@@ -453,6 +496,7 @@ where
         }
     }
 
+    /// Read calibration coefficients from sensor
     fn read_calibration_coefficients(&mut self) -> Result<(), E> {
         let buffer: [u8; 1] = [calibration::FIRST_REGISTER];
 
@@ -475,12 +519,14 @@ where
         Ok(())
     }
 
+    /// Write an unsigned byte to an I²C register
     fn write_u8(&mut self, register: u8, value: u8) -> Result<(), E> {
         let buffer: [u8; 2] = [register, value];
         self.i2c.write(self.address, &buffer)?;
         Ok(())
     }
 
+    /// Write an unsigned byte from an I²C register
     fn read_u8(&mut self, register: u8) -> Result<u8, E> {
         let buffer: [u8; 1] = [register];
         let mut output_buffer: [u8; 1] = [0];
@@ -489,6 +535,7 @@ where
         Ok(output_buffer[0])
     }
 
+    /// Write two unsigned bytes to an I²C register
     fn read_u16(&mut self, register: u8) -> Result<u16, E> {
         let buffer: [u8; 1] = [register];
         let mut output_buffer: [u8; 2] = [0, 0];
@@ -497,6 +544,7 @@ where
         Ok(u16::from(output_buffer[0]) << 8 | u16::from(output_buffer[1]))
     }
 
+    /// Write three unsigned bytes to an I²C register
     fn read_u24(&mut self, register: u8) -> Result<u32, E> {
         let buffer: [u8; 1] = [register];
         let mut output_buffer: [u8; 3] = [0, 0, 0];

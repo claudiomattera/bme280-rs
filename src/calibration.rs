@@ -6,34 +6,62 @@
 // https://opensource.org/licenses/MIT
 // https://opensource.org/licenses/Apache-2.0
 
+//! Data types and functions for BME280 sensor calibration
+
+/// First I²C register for reading calibration coefficients
 pub const FIRST_REGISTER: u8 = 0x88;
+/// Length of first part of calibration coefficients
 pub const FIRST_LENGTH: usize = 26;
+
+/// Second I²C register for reading calibration coefficients
 pub const SECOND_REGISTER: u8 = 0xe1;
+/// Length of second part of calibration coefficients
 pub const SECOND_LENGTH: usize = 7;
+
+/// Total length of calibration coefficients
 pub const TOTAL_LENGTH: usize = FIRST_LENGTH + SECOND_LENGTH;
 
+/// Calibration coefficients
 #[allow(clippy::module_name_repetitions)] // Using a more informative name
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct CalibrationData {
+    /// First temperature coefficient
     pub dig_t1: u16,
+    /// Second temperature coefficient
     pub dig_t2: i16,
+    /// Third temperature coefficient
     pub dig_t3: i16,
 
+    /// First pressure coefficient
     pub dig_p1: u16,
+    /// Second pressure coefficient
     pub dig_p2: i16,
+    /// Third pressure coefficient
     pub dig_p3: i16,
+    /// Fourth pressure coefficient
     pub dig_p4: i16,
+    /// Fifth pressure coefficient
     pub dig_p5: i16,
+    /// Sixth pressure coefficient
     pub dig_p6: i16,
+    /// Seventh pressure coefficient
     pub dig_p7: i16,
+    /// Eighth pressure coefficient
     pub dig_p8: i16,
+    /// Ninth pressure coefficient
     pub dig_p9: i16,
 
+    /// First humidity coefficient
     pub dig_h1: u8,
+    /// Second humidity coefficient
     pub dig_h2: i16,
+    /// Third humidity coefficient
     pub dig_h3: u8,
+    /// Fourth humidity coefficient
     pub dig_h4: i16,
+    /// Fifth humidity coefficient
     pub dig_h5: i16,
+    /// Sixth humidity coefficient
     pub dig_h6: i8,
 }
 
@@ -68,6 +96,7 @@ impl From<&[u8; TOTAL_LENGTH]> for CalibrationData {
 }
 
 impl CalibrationData {
+    /// Compute human-readable temperature from raw temperature
     pub fn compensate_temperature(&self, adc_t: u32) -> i32 {
         #[allow(clippy::cast_possible_wrap)] // Using reference algorithm
         let adc_t = adc_t as i32;
@@ -82,6 +111,7 @@ impl CalibrationData {
         var1 + var2
     }
 
+    /// Compute human-readable pressure from raw pressure and reference temperature
     pub fn compensate_pressure(&self, adc_p: u32, t_fine: i32) -> u32 {
         let var1 = i64::from(t_fine) - 128_000;
         let var2 = var1 * var1 * i64::from(self.dig_p6);
@@ -112,6 +142,7 @@ impl CalibrationData {
         }
     }
 
+    /// Compute human-readable humidity from raw humidity and reference temperature
     pub fn compensate_humidity(&self, adc_h: u16, t_fine: i32) -> u32 {
         let adc_h = i32::from(adc_h);
 

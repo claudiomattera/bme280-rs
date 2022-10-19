@@ -6,15 +6,30 @@
 // https://opensource.org/licenses/MIT
 // https://opensource.org/licenses/Apache-2.0
 
+//! Data types and functions for BME280 sensor configuration
+
 /// Chip configuration
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct Configuration {
+    /// Standby time settings
     standby_time: StandbyTime,
+
+    /// Filter settings
     filter: Filter,
+
+    /// SPI3w option
     spi3w: bool,
+
+    /// Temperature oversampling settings
     temperature_oversampling: Oversampling,
+
+    /// Pressure oversampling settings
     pressure_oversampling: Oversampling,
+
+    /// Humidity oversampling settings
     humidity_oversampling: Oversampling,
+
+    /// Sensor mode
     sensor_mode: SensorMode,
 }
 
@@ -38,6 +53,7 @@ impl From<&Configuration> for (Config, ControlMeasurement, ControlHumidity) {
 }
 
 impl Configuration {
+    /// Convert to low-level configuration items
     #[doc(hidden)]
     #[must_use]
     pub(crate) fn to_lowlevel_configuration(
@@ -60,6 +76,7 @@ impl Configuration {
         self
     }
 
+    /// Set the SPI3w option
     #[doc(hidden)]
     #[allow(unused)]
     pub(crate) fn with_spi3w(mut self, spi3w: bool) -> Self {
@@ -95,6 +112,7 @@ impl Configuration {
         self
     }
 
+    /// Check if chip is in forced mode
     #[doc(hidden)]
     pub(crate) fn is_forced(&self) -> bool {
         self.sensor_mode == SensorMode::Forced
@@ -104,7 +122,10 @@ impl Configuration {
 /// Chip status
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq)]
 pub struct Status {
+    /// True if the sensor is performing a measurement
     measuring: bool,
+
+    /// True if the sensor is performing calibration
     calibrating: bool,
 }
 
@@ -169,6 +190,7 @@ pub enum Oversampling {
 }
 
 impl Oversampling {
+    /// Convert to binary value
     #[doc(hidden)]
     pub(crate) fn to_value(self) -> u8 {
         match self {
@@ -210,6 +232,7 @@ pub enum SensorMode {
 }
 
 impl SensorMode {
+    /// Convert to binary value
     #[doc(hidden)]
     pub(crate) fn to_value(self) -> u8 {
         match self {
@@ -255,6 +278,7 @@ pub enum StandbyTime {
 }
 
 impl StandbyTime {
+    /// Convert to binary value
     #[doc(hidden)]
     pub(crate) fn to_value(self) -> u8 {
         match self {
@@ -296,6 +320,7 @@ pub enum Filter {
 }
 
 impl Filter {
+    /// Convert to binary value
     #[doc(hidden)]
     pub(crate) fn to_value(self) -> u8 {
         match self {
@@ -314,6 +339,7 @@ impl Default for Filter {
     }
 }
 
+/// Low-level config item
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq)]
 pub(crate) struct Config(u8);
 
@@ -332,6 +358,7 @@ impl From<Config> for u8 {
     }
 }
 
+/// Low-level control humidity item
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq)]
 pub(crate) struct ControlHumidity(u8);
 
@@ -347,6 +374,7 @@ impl From<ControlHumidity> for u8 {
     }
 }
 
+/// Low-level control measurement item
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq)]
 pub(crate) struct ControlMeasurement(u8);
 
