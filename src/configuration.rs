@@ -315,7 +315,7 @@ impl Default for Filter {
 }
 
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq)]
-pub struct Config(u8);
+pub(crate) struct Config(u8);
 
 impl From<(StandbyTime, Filter, bool)> for Config {
     fn from((standby_time, filter, spi3w): (StandbyTime, Filter, bool)) -> Self {
@@ -333,7 +333,7 @@ impl From<Config> for u8 {
 }
 
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq)]
-pub struct ControlHumidity(u8);
+pub(crate) struct ControlHumidity(u8);
 
 impl From<Oversampling> for ControlHumidity {
     fn from(humidity_oversampling: Oversampling) -> Self {
@@ -348,7 +348,7 @@ impl From<ControlHumidity> for u8 {
 }
 
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq)]
-pub struct ControlMeasurement(u8);
+pub(crate) struct ControlMeasurement(u8);
 
 impl From<(Oversampling, Oversampling, SensorMode)> for ControlMeasurement {
     fn from(
