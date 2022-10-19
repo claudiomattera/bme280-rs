@@ -64,25 +64,21 @@ impl From<&[u8; TOTAL_LENGTH]> for CalibrationData {
 }
 
 impl CalibrationData {
-    pub fn compensate_temperature(&self, adc_t: u32) -> u32 {
-        let var1 = ((((adc_t as i32) >> 3) - (i32::from(self.dig_t1) << 1))
-            * i32::from(self.dig_t2))
-            >> 11;
-        let var2 = ((((((adc_t as i32) >> 4) - i32::from(self.dig_t1))
-            * (((adc_t as i32) >> 4) - i32::from(self.dig_t1)))
+    pub fn compensate_temperature(&self, adc_t: u32) -> i32 {
+        #[allow(clippy::cast_possible_wrap)] // Using reference algorithm
+        let adc_t = adc_t as i32;
+
+        let var1 = (((adc_t >> 3) - (i32::from(self.dig_t1) << 1)) * i32::from(self.dig_t2)) >> 11;
+        let var2 = (((((adc_t >> 4) - i32::from(self.dig_t1))
+            * ((adc_t >> 4) - i32::from(self.dig_t1)))
             >> 12)
             * i32::from(self.dig_t3))
             >> 14;
 
-        let t_fine = var1 + var2;
-
-        #[allow(clippy::cast_sign_loss)] // Using reference algorithm
-        let t_fine = t_fine as u32;
-
-        t_fine
+        var1 + var2
     }
 
-    pub fn compensate_pressure(&self, adc_p: u32, t_fine: u32) -> u32 {
+    pub fn compensate_pressure(&self, adc_p: u32, t_fine: i32) -> u32 {
         let var1 = i64::from(t_fine) - 128_000;
         let var2 = var1 * var1 * i64::from(self.dig_p6);
         let var2 = var2 + ((var1 * i64::from(self.dig_p5)) << 17);
@@ -111,10 +107,10 @@ impl CalibrationData {
         }
     }
 
-    pub fn compensate_humidity(&self, adc_h: u16, t_fine: u32) -> u32 {
+    pub fn compensate_humidity(&self, adc_h: u16, t_fine: i32) -> u32 {
         let adc_h = i32::from(adc_h);
 
-        let v_x1_u32r: i32 = t_fine as i32 - 76_800_i32;
+        let v_x1_u32r: i32 = t_fine - 76_800_i32;
         let v_x1_u32r: i32 = (((((adc_h as i32) << 14)
             - (i32::from(self.dig_h4) << 20)
             - (i32::from(self.dig_h5) * v_x1_u32r))

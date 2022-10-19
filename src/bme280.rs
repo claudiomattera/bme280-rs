@@ -293,7 +293,7 @@ where
         }
     }
 
-    fn temperature_fine_to_temperature(&mut self, t_fine: u32) -> f32 {
+    fn temperature_fine_to_temperature(&mut self, t_fine: i32) -> f32 {
         let t = (t_fine * 5 + 128) >> 8;
 
         #[allow(clippy::cast_precision_loss)] // Acceptable precision loss
@@ -317,7 +317,7 @@ where
         }
     }
 
-    fn read_temperature_fine(&mut self) -> Result<Option<u32>, E> {
+    fn read_temperature_fine(&mut self) -> Result<Option<i32>, E> {
         let adc_t = self.read_raw_temperature()?;
         let t_fine = adc_t.map(|adc_t| self.coefficients.compensate_temperature(adc_t));
         Ok(t_fine)
@@ -364,12 +364,12 @@ where
     ///
     /// Return an error if it cannot communicate with the sensor.
     pub fn read_pressure_with_temperature(&mut self, temperature: f32) -> Result<Option<f32>, E> {
-        let t = (temperature * 100.0) as u32;
+        let t = (temperature * 100.0) as i32;
         let t_fine = ((t << 8) - 128) / 5;
         self.read_pressure_with_temperature_fine(t_fine)
     }
 
-    fn read_pressure_with_temperature_fine(&mut self, t_fine: u32) -> Result<Option<f32>, E> {
+    fn read_pressure_with_temperature_fine(&mut self, t_fine: i32) -> Result<Option<f32>, E> {
         let adc_p = self.read_raw_pressure()?;
         let p = adc_p.map(|adc_p| {
             let p = self.coefficients.compensate_pressure(adc_p, t_fine);
@@ -423,12 +423,12 @@ where
     ///
     /// Return an error if it cannot communicate with the sensor.
     pub fn read_humidity_with_temperature(&mut self, temperature: f32) -> Result<Option<f32>, E> {
-        let t = (temperature * 100.0) as u32;
+        let t = (temperature * 100.0) as i32;
         let t_fine = ((t << 8) - 128) / 5;
         self.read_humidity_with_temperature_fine(t_fine)
     }
 
-    fn read_humidity_with_temperature_fine(&mut self, t_fine: u32) -> Result<Option<f32>, E> {
+    fn read_humidity_with_temperature_fine(&mut self, t_fine: i32) -> Result<Option<f32>, E> {
         let adc_h = self.read_raw_humidity()?;
         let h = adc_h.map(|adc_h| {
             let h = self.coefficients.compensate_humidity(adc_h, t_fine);
