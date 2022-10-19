@@ -455,7 +455,7 @@ mod tests {
     use calibration::TEST_CALIBRATION_DATA;
 
     #[test]
-    fn test_chip_id() {
+    fn test_chip_id() -> Result<(), Box<dyn std::error::Error>> {
         let expectations = [I2cTransaction::write_read(
             DEFAULT_ADDRESS,
             vec![BME280_REGISTER_CHIPID],
@@ -465,13 +465,15 @@ mod tests {
 
         let mut bme280 = Bme280::new(i2c, DelayMock);
 
-        let chip_id = bme280.chip_id().unwrap();
+        let chip_id = bme280.chip_id()?;
 
         assert_eq!(chip_id, CHIP_ID);
+
+        Ok(())
     }
 
     #[test]
-    fn test_chip_status() {
+    fn test_chip_status() -> Result<(), Box<dyn std::error::Error>> {
         let expectations = [I2cTransaction::write_read(
             DEFAULT_ADDRESS,
             vec![BME280_REGISTER_STATUS],
@@ -481,14 +483,16 @@ mod tests {
 
         let mut bme280 = Bme280::new(i2c, DelayMock);
 
-        let status = bme280.status().unwrap();
+        let status = bme280.status()?;
 
         assert!(!status.is_measuring());
         assert!(!status.is_calibrating());
+
+        Ok(())
     }
 
     #[test]
-    fn test_chip_status_measuring() {
+    fn test_chip_status_measuring() -> Result<(), Box<dyn std::error::Error>> {
         let expectations = [I2cTransaction::write_read(
             DEFAULT_ADDRESS,
             vec![BME280_REGISTER_STATUS],
@@ -498,14 +502,16 @@ mod tests {
 
         let mut bme280 = Bme280::new(i2c, DelayMock);
 
-        let status = bme280.status().unwrap();
+        let status = bme280.status()?;
 
         assert!(status.is_measuring());
         assert!(!status.is_calibrating());
+
+        Ok(())
     }
 
     #[test]
-    fn test_read_temperature_disabled() {
+    fn test_read_temperature_disabled() -> Result<(), Box<dyn std::error::Error>> {
         let expectations = [I2cTransaction::write_read(
             DEFAULT_ADDRESS,
             vec![BME280_REGISTER_TEMPDATA],
@@ -522,13 +528,15 @@ mod tests {
 
         let expected = None;
 
-        let temperature = bme280.read_temperature().unwrap();
+        let temperature = bme280.read_temperature()?;
 
         assert_eq!(temperature, expected);
+
+        Ok(())
     }
 
     #[test]
-    fn test_read_temperature() {
+    fn test_read_temperature() -> Result<(), Box<dyn std::error::Error>> {
         let expectations = [I2cTransaction::write_read(
             DEFAULT_ADDRESS,
             vec![BME280_REGISTER_TEMPDATA],
@@ -545,13 +553,15 @@ mod tests {
 
         let expected = Some(27.33);
 
-        let temperature = bme280.read_temperature().unwrap();
+        let temperature = bme280.read_temperature()?;
 
         assert_eq!(temperature, expected);
+
+        Ok(())
     }
 
     #[test]
-    fn test_read_pressure_disabled() {
+    fn test_read_pressure_disabled() -> Result<(), Box<dyn std::error::Error>> {
         let expectations = [
             I2cTransaction::write_read(
                 DEFAULT_ADDRESS,
@@ -575,13 +585,15 @@ mod tests {
 
         let expected = None;
 
-        let pressure = bme280.read_pressure().unwrap();
+        let pressure = bme280.read_pressure()?;
 
         assert_eq!(pressure, expected);
+
+        Ok(())
     }
 
     #[test]
-    fn test_read_pressure() {
+    fn test_read_pressure() -> Result<(), Box<dyn std::error::Error>> {
         let expectations = [
             I2cTransaction::write_read(
                 DEFAULT_ADDRESS,
@@ -605,13 +617,15 @@ mod tests {
 
         let expected = Some(101_233.016);
 
-        let pressure = bme280.read_pressure().unwrap();
+        let pressure = bme280.read_pressure()?;
 
         assert_eq!(pressure, expected);
+
+        Ok(())
     }
 
     #[test]
-    fn test_read_humidity_disabled() {
+    fn test_read_humidity_disabled() -> Result<(), Box<dyn std::error::Error>> {
         let expectations = [
             I2cTransaction::write_read(
                 DEFAULT_ADDRESS,
@@ -635,13 +649,15 @@ mod tests {
 
         let expected = None;
 
-        let humidity = bme280.read_humidity().unwrap();
+        let humidity = bme280.read_humidity()?;
 
         assert_eq!(humidity, expected);
+
+        Ok(())
     }
 
     #[test]
-    fn test_read_humidity() {
+    fn test_read_humidity() -> Result<(), Box<dyn std::error::Error>> {
         let expectations = [
             I2cTransaction::write_read(
                 DEFAULT_ADDRESS,
@@ -665,8 +681,10 @@ mod tests {
 
         let expected = Some(34.854_492);
 
-        let humidity = bme280.read_humidity().unwrap();
+        let humidity = bme280.read_humidity()?;
 
         assert_eq!(humidity, expected);
+
+        Ok(())
     }
 }
