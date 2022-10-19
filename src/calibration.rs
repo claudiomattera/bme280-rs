@@ -76,7 +76,10 @@ impl CalibrationData {
 
         let t_fine = var1 + var2;
 
-        t_fine as u32
+        #[allow(clippy::cast_sign_loss)] // Using reference algorithm
+        let t_fine = t_fine as u32;
+
+        t_fine
     }
 
     pub fn compensate_pressure(&self, adc_p: u32, t_fine: u32) -> u32 {
@@ -101,7 +104,10 @@ impl CalibrationData {
 
             let p = var5;
 
-            p as u32
+            #[allow(clippy::cast_sign_loss)] // Using reference algorithm
+            let pressure = p as u32;
+
+            pressure
         }
     }
 
@@ -129,7 +135,13 @@ impl CalibrationData {
         } else {
             v_x1_u32r
         };
-        (v_x1_u32r >> 12) as u32
+
+        let humidity = v_x1_u32r >> 12;
+
+        #[allow(clippy::cast_sign_loss)] // Using reference algorithm
+        let humidity = humidity as u32;
+
+        humidity
     }
 }
 
