@@ -6,7 +6,7 @@
 // https://opensource.org/licenses/MIT
 // https://opensource.org/licenses/Apache-2.0
 
-use log::*;
+use log::{debug, warn};
 
 use embedded_hal::blocking::delay::DelayMs;
 use embedded_hal::blocking::i2c::{Read, Write, WriteRead};
