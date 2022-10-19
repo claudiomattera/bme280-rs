@@ -274,7 +274,7 @@ where
 
         if let Some(adc_t) = adc_t {
             let t_fine = self.coefficients.compensate_temperature(adc_t);
-            let t = Some(self.temperature_fine_to_temperature(t_fine));
+            let t = Some(Self::temperature_fine_to_temperature(t_fine));
             let p = adc_p.map(|adc_p| self.coefficients.compensate_pressure(adc_p, t_fine));
             let h = adc_h.map(|adc_h| self.coefficients.compensate_humidity(adc_h, t_fine));
 
@@ -293,7 +293,7 @@ where
         }
     }
 
-    fn temperature_fine_to_temperature(&mut self, t_fine: i32) -> f32 {
+    fn temperature_fine_to_temperature(t_fine: i32) -> f32 {
         let t = (t_fine * 5 + 128) >> 8;
 
         #[allow(clippy::cast_precision_loss)] // Acceptable precision loss
@@ -311,7 +311,7 @@ where
     /// Return an error if it cannot communicate with the sensor.
     pub fn read_temperature(&mut self) -> Result<Option<f32>, E> {
         if let Some(t_fine) = self.read_temperature_fine()? {
-            Ok(Some(self.temperature_fine_to_temperature(t_fine)))
+            Ok(Some(Self::temperature_fine_to_temperature(t_fine)))
         } else {
             Ok(None)
         }
