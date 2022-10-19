@@ -110,11 +110,13 @@ pub struct Status {
 
 impl Status {
     /// Return `true` if the chip is measuring data
+    #[must_use]
     pub fn is_measuring(&self) -> bool {
         self.measuring
     }
 
     /// Return `true` if the chip is computing calibration data
+    #[must_use]
     pub fn is_calibrating(&self) -> bool {
         self.calibrating
     }
