@@ -279,7 +279,10 @@ where
             let h = adc_h.map(|adc_h| self.coefficients.compensate_humidity(adc_h, t_fine));
 
             let temperature = t;
+
+            #[allow(clippy::cast_precision_loss)] // Acceptable precision loss
             let pressure = p.map(|p| p as f32 / 256.0);
+            #[allow(clippy::cast_precision_loss)] // Acceptable precision loss
             let humidity = h.map(|h| h as f32 / 1024.0);
 
             Ok((temperature, pressure, humidity))
@@ -292,7 +295,11 @@ where
 
     fn temperature_fine_to_temperature(&mut self, t_fine: u32) -> f32 {
         let t = (t_fine * 5 + 128) >> 8;
-        t as f32 / 100.0
+
+        #[allow(clippy::cast_precision_loss)] // Acceptable precision loss
+        let t = t as f32;
+
+        t / 100.0
     }
 
     /// Read a sample of temperature
@@ -366,7 +373,11 @@ where
         let adc_p = self.read_raw_pressure()?;
         let p = adc_p.map(|adc_p| {
             let p = self.coefficients.compensate_pressure(adc_p, t_fine);
-            p as f32 / 256.0
+
+            #[allow(clippy::cast_precision_loss)] // Acceptable precision loss
+            let p = p as f32;
+
+            p / 256.0
         });
         Ok(p)
     }
@@ -421,7 +432,11 @@ where
         let adc_h = self.read_raw_humidity()?;
         let h = adc_h.map(|adc_h| {
             let h = self.coefficients.compensate_humidity(adc_h, t_fine);
-            h as f32 / 1024.0
+
+            #[allow(clippy::cast_precision_loss)] // Acceptable precision loss
+            let h = h as f32;
+
+            h / 1024.0
         });
         Ok(h)
     }
