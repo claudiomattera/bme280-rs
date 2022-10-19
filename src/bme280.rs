@@ -97,7 +97,7 @@ where
 
     /// Create a new sensor using an I²C interface and a delay function
     pub fn new_with_address(i2c: I2C, address: u8, delay: D) -> Self {
-        Self::new_with_coefficients(i2c, address, delay, Default::default())
+        Self::new_with_coefficients(i2c, address, delay, CalibrationData::default())
     }
 
     fn new_with_coefficients(
@@ -112,7 +112,7 @@ where
             address: address as u8,
             delay,
             coefficients,
-            configuration: Default::default(),
+            configuration: Configuration::default(),
         }
     }
 
