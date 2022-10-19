@@ -168,8 +168,8 @@ pub enum Oversampling {
 
 impl Oversampling {
     #[doc(hidden)]
-    pub(crate) fn to_value(&self) -> u8 {
-        match *self {
+    pub(crate) fn to_value(self) -> u8 {
+        match self {
             Self::Skip => 0b000,
             Self::Oversample1 => 0b001,
             Self::Oversample2 => 0b010,
@@ -209,8 +209,8 @@ pub enum SensorMode {
 
 impl SensorMode {
     #[doc(hidden)]
-    pub(crate) fn to_value(&self) -> u8 {
-        match *self {
+    pub(crate) fn to_value(self) -> u8 {
+        match self {
             Self::Sleep => 0b00,
             Self::Forced => 0b01,
             Self::Normal => 0b11,
@@ -254,8 +254,8 @@ pub enum StandbyTime {
 
 impl StandbyTime {
     #[doc(hidden)]
-    pub(crate) fn to_value(&self) -> u8 {
-        match *self {
+    pub(crate) fn to_value(self) -> u8 {
+        match self {
             Self::Millis0_5 => 0b000,
             Self::Millis10 => 0b110,
             Self::Millis20 => 0b111,
@@ -295,8 +295,8 @@ pub enum Filter {
 
 impl Filter {
     #[doc(hidden)]
-    pub(crate) fn to_value(&self) -> u8 {
-        match *self {
+    pub(crate) fn to_value(self) -> u8 {
+        match self {
             Self::Off => 0b000,
             Self::Filter2 => 0b001,
             Self::Filter4 => 0b010,
