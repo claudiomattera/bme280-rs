@@ -123,6 +123,10 @@ where
     ///
     /// Note that the default sampling configuration disables measurement of
     /// temperature, pressure and humidity.
+    ///
+    /// # Errors
+    ///
+    /// Return an error if it cannot communicate with the sensor.
     pub fn init(&mut self) -> Result<(), E> {
         debug!("Sending soft-reset signal");
         self.write_u8(BME280_REGISTER_SOFTRESET, BME280_COMMAND_SOFTRESET)?;
@@ -152,6 +156,10 @@ where
     ///
     /// The chip id is always [`CHIP_ID`], so this function can be used
     /// to validate that communication with the chip works fine.
+    ///
+    /// # Errors
+    ///
+    /// Return an error if it cannot communicate with the sensor.
     pub fn chip_id(&mut self) -> Result<u8, E> {
         debug!("Read chip id");
         let chip_id = self.read_u8(BME280_REGISTER_CHIPID)?;
@@ -160,6 +168,10 @@ where
     }
 
     /// Obtain the chip status
+    ///
+    /// # Errors
+    ///
+    /// Return an error if it cannot communicate with the sensor.
     pub fn status(&mut self) -> Result<Status, E> {
         debug!("Read chip status");
         let status = self.read_u8(BME280_REGISTER_STATUS)?.into();
@@ -168,6 +180,10 @@ where
     }
 
     /// Set the sampling configuration
+    ///
+    /// # Errors
+    ///
+    /// Return an error if it cannot communicate with the sensor.
     pub fn set_sampling_configuration(&mut self, configuration: Configuration) -> Result<(), E> {
         self.configuration = configuration;
 
@@ -193,6 +209,10 @@ where
     /// after every measurement.
     /// It must be set again to forced mode in order to force a new
     /// measurement.
+    ///
+    /// # Errors
+    ///
+    /// Return an error if it cannot communicate with the sensor.
     pub fn take_forced_measurement(&mut self) -> Result<bool, E> {
         if self.configuration.is_forced() {
             debug!("Forcing taking a measurement");
@@ -243,6 +263,10 @@ where
     ///
     /// Measures that are disabled in the sampling configuration have value
     /// `None`.
+    ///
+    /// # Errors
+    ///
+    /// Return an error if it cannot communicate with the sensor.
     pub fn read_sample(&mut self) -> Result<Sample, E> {
         let (adc_t, adc_p, adc_h) = self.read_raw_sample()?;
 
@@ -272,6 +296,10 @@ where
     /// Read a sample of temperature
     ///
     /// If temperature is disabled in the sampling configuration, return `None`.
+    ///
+    /// # Errors
+    ///
+    /// Return an error if it cannot communicate with the sensor.
     pub fn read_temperature(&mut self) -> Result<Option<f32>, E> {
         if let Some(t_fine) = self.read_temperature_fine()? {
             Ok(Some(self.temperature_fine_to_temperature(t_fine)))
@@ -302,6 +330,10 @@ where
     /// value, is also read from the sensor.
     ///
     /// If pressure is disabled in the sampling configuration, return `None`.
+    ///
+    /// # Errors
+    ///
+    /// Return an error if it cannot communicate with the sensor.
     pub fn read_pressure(&mut self) -> Result<Option<f32>, E> {
         if let Some(t_fine) = self.read_temperature_fine()? {
             self.read_pressure_with_temperature_fine(t_fine)
@@ -318,6 +350,10 @@ where
     /// is already known.
     ///
     /// If pressure is disabled in the sampling configuration, return `None`.
+    ///
+    /// # Errors
+    ///
+    /// Return an error if it cannot communicate with the sensor.
     pub fn read_pressure_with_temperature(&mut self, temperature: f32) -> Result<Option<f32>, E> {
         let t = (temperature * 100.0) as u32;
         let t_fine = ((t << 8) - 128) / 5;
@@ -349,6 +385,10 @@ where
     /// value, is also read from the sensor.
     ///
     /// If humidity is disabled in the sampling configuration, return `None`.
+    ///
+    /// # Errors
+    ///
+    /// Return an error if it cannot communicate with the sensor.
     pub fn read_humidity(&mut self) -> Result<Option<f32>, E> {
         if let Some(t_fine) = self.read_temperature_fine()? {
             self.read_humidity_with_temperature_fine(t_fine)
@@ -365,6 +405,10 @@ where
     /// is already known.
     ///
     /// If humidity is disabled in the sampling configuration, return `None`.
+    ///
+    /// # Errors
+    ///
+    /// Return an error if it cannot communicate with the sensor.
     pub fn read_humidity_with_temperature(&mut self, temperature: f32) -> Result<Option<f32>, E> {
         let t = (temperature * 100.0) as u32;
         let t_fine = ((t << 8) - 128) / 5;
