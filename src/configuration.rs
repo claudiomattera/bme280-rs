@@ -128,8 +128,8 @@ impl core::fmt::Display for Status {
 impl From<u8> for Status {
     fn from(arg: u8) -> Self {
         Self {
-            measuring: (arg & 0b00000100) != 0,
-            calibrating: (arg & 0b00000001) != 0,
+            measuring: (arg & 0b0000_0100) != 0,
+            calibrating: (arg & 0b0000_0001) != 0,
         }
     }
 }
@@ -365,7 +365,7 @@ mod tests {
 
     #[test]
     fn test_status() {
-        let raw_status = 0b00000000;
+        let raw_status = 0b0000_0000;
         let status: Status = raw_status.into();
 
         let expected = Status {
@@ -378,7 +378,7 @@ mod tests {
 
     #[test]
     fn test_status_calibrating() {
-        let raw_status = 0b00000001;
+        let raw_status = 0b0000_0001;
         let status: Status = raw_status.into();
 
         let expected = Status {
@@ -407,7 +407,7 @@ mod tests {
         let (config, _ctrl_meas, _ctrl_hum) = configuration.to_lowlevel_configuration();
         let actual: u8 = config.into();
 
-        let expected = 0b01000101;
+        let expected = 0b0100_0101;
 
         assert_eq!(actual, expected);
     }
@@ -421,7 +421,7 @@ mod tests {
         let (_config, ctrl_meas, _ctrl_hum) = configuration.to_lowlevel_configuration();
         let actual: u8 = ctrl_meas.into();
 
-        let expected = 0b10001111;
+        let expected = 0b1000_1111;
 
         assert_eq!(actual, expected);
     }

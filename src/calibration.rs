@@ -79,7 +79,7 @@ impl CalibrationData {
     }
 
     pub fn compensate_pressure(&self, adc_p: u32, t_fine: u32) -> u32 {
-        let var1 = (t_fine as i64) - 128000;
+        let var1 = (t_fine as i64) - 128_000;
         let var2 = var1 * var1 * self.dig_p6 as i64;
         let var2 = var2 + ((var1 * (self.dig_p5 as i64)) << 17);
         let var2 = var2 + ((self.dig_p4 as i64) << 35);
@@ -91,7 +91,7 @@ impl CalibrationData {
             // division by zero
             0
         } else {
-            let var4 = 1048576 - adc_p as i64;
+            let var4 = 1_048_576 - adc_p as i64;
             let var4 = ((((var4 as i64) << 31) - var2) * 3125) / var1;
             let var1 = ((self.dig_p9 as i64) * ((var4 as i64) >> 13) * ((var4 as i64) >> 13)) >> 25;
             let var2 = ((self.dig_p8 as i64) * var4) >> 19;
@@ -106,24 +106,24 @@ impl CalibrationData {
     pub fn compensate_humidity(&self, adc_h: u16, t_fine: u32) -> u32 {
         let adc_h = adc_h as i32;
 
-        let v_x1_u32r: i32 = t_fine as i32 - 76800_i32;
+        let v_x1_u32r: i32 = t_fine as i32 - 76_800_i32;
         let v_x1_u32r: i32 = (((((adc_h as i32) << 14)
             - ((self.dig_h4 as i32) << 20)
             - ((self.dig_h5 as i32) * v_x1_u32r))
-            + (16384_i32))
+            + (16_384_i32))
             >> 15)
             * (((((((v_x1_u32r * (self.dig_h6 as i32)) >> 10)
-                * (((v_x1_u32r * (self.dig_h3 as i32)) >> 11) + (32768_i32)))
+                * (((v_x1_u32r * (self.dig_h3 as i32)) >> 11) + (32_768_i32)))
                 >> 10)
-                + (2097152_i32))
+                + (2_097_152_i32))
                 * (self.dig_h2 as i32)
                 + 8192_i32)
                 >> 14);
         let v_x1_u32r: i32 = v_x1_u32r
             - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * (self.dig_h1 as i32)) >> 4);
         let v_x1_u32r = if v_x1_u32r < 0 { 0 } else { v_x1_u32r };
-        let v_x1_u32r = if v_x1_u32r > 419430400 {
-            419430400
+        let v_x1_u32r = if v_x1_u32r > 419_430_400 {
+            419_430_400
         } else {
             v_x1_u32r
         };
@@ -190,7 +190,7 @@ mod tests {
         let t_fine = 0x22391;
 
         let actual = TEST_CALIBRATION_DATA.compensate_pressure(adc_p, t_fine);
-        let expected = 0x18b663f;
+        let expected = 0x018b_663f;
 
         assert_eq!(actual, expected);
     }

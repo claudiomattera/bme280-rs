@@ -492,7 +492,7 @@ mod tests {
         let expectations = [I2cTransaction::write_read(
             DEFAULT_ADDRESS,
             vec![BME280_REGISTER_STATUS],
-            vec![0b00000100],
+            vec![0b0000_0100],
         )];
         let i2c = I2cMock::new(&expectations);
 
@@ -603,7 +603,7 @@ mod tests {
             TEST_CALIBRATION_DATA.clone(),
         );
 
-        let expected = Some(101233.016);
+        let expected = Some(101_233.016);
 
         let pressure = bme280.read_pressure().unwrap();
 
@@ -663,7 +663,7 @@ mod tests {
             TEST_CALIBRATION_DATA.clone(),
         );
 
-        let expected = Some(34.854492);
+        let expected = Some(34.854_492);
 
         let humidity = bme280.read_humidity().unwrap();
 
