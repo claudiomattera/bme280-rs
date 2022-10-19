@@ -309,7 +309,7 @@ impl From<(StandbyTime, Filter, bool)> for Config {
     fn from((standby_time, filter, spi3w): (StandbyTime, Filter, bool)) -> Self {
         let standby_time = standby_time.to_value() & 0b111;
         let filter = filter.to_value() & 0b111;
-        let spi3w = spi3w as u8 & 0b1;
+        let spi3w = u8::from(spi3w) & 0b1;
         Self(standby_time << 5 | filter << 2 | spi3w)
     }
 }

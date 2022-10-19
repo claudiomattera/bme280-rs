@@ -56,8 +56,8 @@ impl From<&[u8; TOTAL_LENGTH]> for CalibrationData {
             dig_h1: data[25],
             dig_h2: i16::from_le_bytes([data[26], data[27]]),
             dig_h3: data[28],
-            dig_h4: (data[29] as i16) << 4 | (data[30] as i16) & 0xF,
-            dig_h5: (((data[30] as i16) & 0xF0) >> 4) | ((data[31] as i16) << 4),
+            dig_h4: i16::from(data[29]) << 4 | i16::from(data[30]) & 0xF,
+            dig_h5: ((i16::from(data[30]) & 0xF0) >> 4) | (i16::from(data[31]) << 4),
             dig_h6: data[32] as i8,
         }
     }
@@ -65,12 +65,13 @@ impl From<&[u8; TOTAL_LENGTH]> for CalibrationData {
 
 impl CalibrationData {
     pub fn compensate_temperature(&self, adc_t: u32) -> u32 {
-        let var1 =
-            ((((adc_t as i32) >> 3) - ((self.dig_t1 as i32) << 1)) * (self.dig_t2 as i32)) >> 11;
-        let var2 = ((((((adc_t as i32) >> 4) - (self.dig_t1 as i32))
-            * (((adc_t as i32) >> 4) - (self.dig_t1 as i32)))
+        let var1 = ((((adc_t as i32) >> 3) - (i32::from(self.dig_t1) << 1))
+            * i32::from(self.dig_t2))
+            >> 11;
+        let var2 = ((((((adc_t as i32) >> 4) - i32::from(self.dig_t1))
+            * (((adc_t as i32) >> 4) - i32::from(self.dig_t1)))
             >> 12)
-            * (self.dig_t3 as i32))
+            * i32::from(self.dig_t3))
             >> 14;
 
         let t_fine = var1 + var2;
@@ -79,23 +80,24 @@ impl CalibrationData {
     }
 
     pub fn compensate_pressure(&self, adc_p: u32, t_fine: u32) -> u32 {
-        let var1 = (t_fine as i64) - 128_000;
-        let var2 = var1 * var1 * self.dig_p6 as i64;
-        let var2 = var2 + ((var1 * (self.dig_p5 as i64)) << 17);
-        let var2 = var2 + ((self.dig_p4 as i64) << 35);
+        let var1 = i64::from(t_fine) - 128_000;
+        let var2 = var1 * var1 * i64::from(self.dig_p6);
+        let var2 = var2 + ((var1 * i64::from(self.dig_p5)) << 17);
+        let var2 = var2 + (i64::from(self.dig_p4) << 35);
         let var1 =
-            ((var1 * var1 * (self.dig_p3 as i64)) >> 8) + ((var1 * (self.dig_p2 as i64)) << 12);
-        let var1 = ((((1_i64) << 47) + var1) * (self.dig_p1 as i64)) >> 33;
+            ((var1 * var1 * i64::from(self.dig_p3)) >> 8) + ((var1 * i64::from(self.dig_p2)) << 12);
+        let var1 = ((((1_i64) << 47) + var1) * i64::from(self.dig_p1)) >> 33;
 
         if var1 == 0 {
             // division by zero
             0
         } else {
-            let var4 = 1_048_576 - adc_p as i64;
+            let var4 = 1_048_576 - i64::from(adc_p);
             let var4 = ((((var4 as i64) << 31) - var2) * 3125) / var1;
-            let var1 = ((self.dig_p9 as i64) * ((var4 as i64) >> 13) * ((var4 as i64) >> 13)) >> 25;
-            let var2 = ((self.dig_p8 as i64) * var4) >> 19;
-            let var5 = ((var4 + var1 + var2) >> 8) + ((self.dig_p7 as i64) << 4);
+            let var1 =
+                (i64::from(self.dig_p9) * ((var4 as i64) >> 13) * ((var4 as i64) >> 13)) >> 25;
+            let var2 = (i64::from(self.dig_p8) * var4) >> 19;
+            let var5 = ((var4 + var1 + var2) >> 8) + (i64::from(self.dig_p7) << 4);
 
             let p = var5;
 
@@ -104,23 +106,23 @@ impl CalibrationData {
     }
 
     pub fn compensate_humidity(&self, adc_h: u16, t_fine: u32) -> u32 {
-        let adc_h = adc_h as i32;
+        let adc_h = i32::from(adc_h);
 
         let v_x1_u32r: i32 = t_fine as i32 - 76_800_i32;
         let v_x1_u32r: i32 = (((((adc_h as i32) << 14)
-            - ((self.dig_h4 as i32) << 20)
-            - ((self.dig_h5 as i32) * v_x1_u32r))
+            - (i32::from(self.dig_h4) << 20)
+            - (i32::from(self.dig_h5) * v_x1_u32r))
             + (16_384_i32))
             >> 15)
-            * (((((((v_x1_u32r * (self.dig_h6 as i32)) >> 10)
-                * (((v_x1_u32r * (self.dig_h3 as i32)) >> 11) + (32_768_i32)))
+            * (((((((v_x1_u32r * i32::from(self.dig_h6)) >> 10)
+                * (((v_x1_u32r * i32::from(self.dig_h3)) >> 11) + (32_768_i32)))
                 >> 10)
                 + (2_097_152_i32))
-                * (self.dig_h2 as i32)
+                * i32::from(self.dig_h2)
                 + 8192_i32)
                 >> 14);
         let v_x1_u32r: i32 = v_x1_u32r
-            - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * (self.dig_h1 as i32)) >> 4);
+            - (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * i32::from(self.dig_h1)) >> 4);
         let v_x1_u32r = if v_x1_u32r < 0 { 0 } else { v_x1_u32r };
         let v_x1_u32r = if v_x1_u32r > 419_430_400 {
             419_430_400

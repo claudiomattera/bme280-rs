@@ -243,14 +243,16 @@ where
         // msb [7:0] = p[19:12]
         // lsb [7:0] = p[11:4]
         // xlsb[7:4] = p[3:0]
-        let adc_p: u32 = ((buf[0] as u32) << 12) | ((buf[1] as u32) << 4) | ((buf[2] as u32) >> 4);
+        let adc_p: u32 =
+            (u32::from(buf[0]) << 12) | (u32::from(buf[1]) << 4) | (u32::from(buf[2]) >> 4);
         // msb [7:0] = t[19:12]
         // lsb [7:0] = t[11:4]
         // xlsb[7:4] = t[3:0]
-        let adc_t: u32 = ((buf[3] as u32) << 12) | ((buf[4] as u32) << 4) | ((buf[5] as u32) >> 4);
+        let adc_t: u32 =
+            (u32::from(buf[3]) << 12) | (u32::from(buf[4]) << 4) | (u32::from(buf[5]) >> 4);
         // msb [7:0] = h[15:8]
         // lsb [7:0] = h[7:0]
-        let adc_h: u16 = ((buf[6] as u16) << 8) | (buf[7] as u16);
+        let adc_h: u16 = (u16::from(buf[6]) << 8) | u16::from(buf[7]);
 
         Ok((
             if adc_t == 0x80000 { None } else { Some(adc_t) },
@@ -475,7 +477,7 @@ where
         let mut output_buffer: [u8; 2] = [0, 0];
         self.i2c
             .write_read(self.address, &buffer, &mut output_buffer)?;
-        Ok((output_buffer[0] as u16) << 8 | (output_buffer[1] as u16))
+        Ok(u16::from(output_buffer[0]) << 8 | u16::from(output_buffer[1]))
     }
 
     fn read_u24(&mut self, register: u8) -> Result<u32, E> {
@@ -483,9 +485,9 @@ where
         let mut output_buffer: [u8; 3] = [0, 0, 0];
         self.i2c
             .write_read(self.address, &buffer, &mut output_buffer)?;
-        Ok((output_buffer[0] as u32) << 12
-            | (output_buffer[1] as u32) << 4
-            | (output_buffer[2] as u32) >> 4)
+        Ok(u32::from(output_buffer[0]) << 12
+            | u32::from(output_buffer[1]) << 4
+            | u32::from(output_buffer[2]) >> 4)
     }
 }
 
