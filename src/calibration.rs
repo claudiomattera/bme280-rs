@@ -104,6 +104,7 @@ impl CalibrationData {
             let p = var5;
 
             #[allow(clippy::cast_sign_loss)] // Using reference algorithm
+            #[allow(clippy::cast_possible_truncation)] // Acceptable truncation
             let pressure = p as u32;
 
             pressure

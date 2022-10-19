@@ -364,6 +364,7 @@ where
     ///
     /// Return an error if it cannot communicate with the sensor.
     pub fn read_pressure_with_temperature(&mut self, temperature: f32) -> Result<Option<f32>, E> {
+        #[allow(clippy::cast_possible_truncation)] // Acceptable truncation
         let t = (temperature * 100.0) as i32;
         let t_fine = ((t << 8) - 128) / 5;
         self.read_pressure_with_temperature_fine(t_fine)
@@ -423,6 +424,7 @@ where
     ///
     /// Return an error if it cannot communicate with the sensor.
     pub fn read_humidity_with_temperature(&mut self, temperature: f32) -> Result<Option<f32>, E> {
+        #[allow(clippy::cast_possible_truncation)] // Acceptable truncation
         let t = (temperature * 100.0) as i32;
         let t_fine = ((t << 8) - 128) / 5;
         self.read_humidity_with_temperature_fine(t_fine)
