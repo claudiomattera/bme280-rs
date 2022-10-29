@@ -1,4 +1,4 @@
-BME280 Crate
+Rust BME280 Crate
 ====
 
 A Rust crate to query temperature, pressure and humidity from sensor [BME280]
