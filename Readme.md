@@ -14,7 +14,7 @@ Usage
 Add the dependency to `Cargo.toml`.
 
 ~~~~toml
-[dependencies.bme280]
+[dependencies.bme280-rs]
 version = "0.1.0"
 ~~~~
 
