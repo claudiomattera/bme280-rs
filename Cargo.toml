@@ -17,6 +17,12 @@ categories = [
     "no-std",
 ]
 publish = true
+exclude = [
+    ".gitattributes",
+    ".drone.yml",
+    ".pre-commit-config.yaml",
+    "Makefile.toml",
+]
 
 [dependencies]
 log = { version = "0.4" }
