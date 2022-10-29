@@ -31,14 +31,14 @@ steps:
 - name: run pre-commit checks
   image: python:3-slim
   environment:
-    SKIP: no-commit-to-branch
+    SKIP: no-commit-to-branch,fmt,cargo-check
   commands:
   - python3 -m venv "$${VIRTUAL_ENV}"
   - . "$${VIRTUAL_ENV}/bin/activate"
   - apt-get update
   - apt-get install --no-install-recommends -y git
   - pip install pre-commit
-  - env SKIP="fmt,cargo-check" pre-commit run --all-files
+  - pre-commit run --all-files
 
 - name: download dependencies
   image: docker.claudiomattera.it/claudiomattera/rust:1
