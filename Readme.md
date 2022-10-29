@@ -3,7 +3,7 @@ BME280 Crate
 
 A Rust crate to query temperature, pressure and humidity from sensor [BME280]
 
-<https://git.claudiomattera.it/claudiomattera/rust-bme280/>
+<https://gitlab.com/claudiomattera/bme280-rs/>
 
 [BME280]: https://www.bosch-sensortec.com/products/environmental-sensors/humidity-sensors-bme280/
 
@@ -22,7 +22,7 @@ A `Bme280` structure can be created from an I²C interface and a delay function.
 The initial sampling configuration disables all measurements, so it is necessary to reconfigure the chip with the desired settings before read samples.
 
 ~~~~rust
-use bme280::{Bme280, Configuration, Oversampling, SensorMode};
+use bme280_rs::{Bme280, Configuration, Oversampling, SensorMode};
 
 let i2c = ...
 let delay = ...

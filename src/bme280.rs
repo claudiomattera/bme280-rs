@@ -62,7 +62,7 @@ type RawSample = (Option<u32>, Option<u32>, Option<u16>);
 /// ```no_run
 /// # use embedded_hal_mock::delay::MockNoop as DelayMock;
 /// # use embedded_hal_mock::i2c::{Mock as I2cMock};
-/// use bme280::{Bme280, Configuration, Oversampling, SensorMode};
+/// use bme280_rs::{Bme280, Configuration, Oversampling, SensorMode};
 /// # let i2c = I2cMock::new(&[]);
 /// # let delay = DelayMock;
 ///

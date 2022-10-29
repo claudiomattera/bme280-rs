@@ -1,12 +1,12 @@
 [package]
-name = "bme280"
+name = "bme280-rs"
 version = "0.1.0-dev"
 authors = ["Claudio Mattera <dev@claudiomattera.it>"]
 edition = "2021"
-description = "A library to query BME280 sensors over I²C"
+description = "A crate to query BME280 sensors over I²C"
 readme = "Readme.md"
-homepage = "https://git.claudiomattera.it/claudiomattera/rust-bme280"
-repository = "https://git.claudiomattera.it/claudiomattera/rust-bme280"
+homepage = "https://gitlab.com/claudiomattera/bme280-rs"
+repository = "https://gitlab.com/claudiomattera/bme280-rs"
 license = "MIT OR Apache-2.0"
 keywords = [
     "sensor",
