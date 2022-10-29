@@ -1,0 +1,11 @@
+# Set ignored files when exporting
+.gitattributes export-ignore
+.gitignore export-ignore
+.drone.yml export-ignore
+
+# Normalize line endings (CR/LF) by default
+* text=auto
+
+# Specify explicit diff drivers
+*.rs text diff=rust
+*.md text diff=markdown

@@ -1,0 +1,33 @@
+[package]
+name = "bme280-rs"
+version = "0.1.0"
+authors = ["Claudio Mattera <dev@claudiomattera.it>"]
+edition = "2021"
+description = "A crate to query BME280 sensors over I²C"
+readme = "Readme.md"
+homepage = "https://gitlab.com/claudiomattera/bme280-rs"
+repository = "https://gitlab.com/claudiomattera/bme280-rs"
+license = "MIT OR Apache-2.0"
+keywords = [
+    "sensor",
+    "i2c",
+]
+categories = [
+    "embedded",
+    "no-std",
+]
+publish = true
+exclude = [
+    ".gitattributes",
+    ".drone.yml",
+    ".pre-commit-config.yaml",
+    "Makefile.toml",
+]
+
+[dependencies]
+log = { version = "0.4" }
+embedded-hal = { version = "0.2" }
+
+[dev-dependencies]
+assert2 = { version = "0.3" }
+embedded-hal-mock = { version = "0.8" }
