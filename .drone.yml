@@ -105,35 +105,12 @@ name: build release
 environment:
   CARGO_INCREMENTAL: 0
   CARGO_NET_RETRY: 10
-  CARGO_HOME: "./.cargo_home/"
 trigger:
   event:
   - tag
   - promote
 
 steps:
-- name: restore cache
-  image: plugins/s3-cache
-  settings:
-    endpoint:
-      from_secret: s3_endpoint
-    access_key:
-      from_secret: s3_access_key
-    secret_key:
-      from_secret: s3_secret_key
-    root: drone
-    restore: true
-
-- name: download dependencies
-  image: docker.claudiomattera.it/claudiomattera/rust:1
-  commands:
-  - cargo make fetch
-
-- name: remove build artifacts
-  image: docker.claudiomattera.it/claudiomattera/rust:1
-  commands:
-  - cargo make clean-release
-
 - name: create release on gitea
   when:
     event:
