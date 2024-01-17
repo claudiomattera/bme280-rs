@@ -15,7 +15,7 @@ Add the dependency to `Cargo.toml`.
 
 ~~~~toml
 [dependencies.bme280-rs]
-version = "0.1.0"
+version = "0.2.0"
 ~~~~
 
 A `Bme280` structure can be created from an I²C interface and a delay function.
