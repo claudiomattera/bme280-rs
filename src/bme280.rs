@@ -133,7 +133,7 @@ where
         debug!("Creating new BME280 device at address 0x{:x}", address);
         Self {
             i2c,
-            address: address as u8,
+            address,
             delay,
             coefficients,
             configuration: Configuration::default(),
@@ -527,7 +527,7 @@ where
         self.i2c.write_read(
             self.address,
             &buffer,
-            &mut out[calibration::FIRST_LENGTH as usize..calibration::TOTAL_LENGTH],
+            &mut out[calibration::FIRST_LENGTH..calibration::TOTAL_LENGTH],
         )?;
 
         self.coefficients = (&out).into();

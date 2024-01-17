@@ -23,6 +23,7 @@ pub const TOTAL_LENGTH: usize = FIRST_LENGTH + SECOND_LENGTH;
 
 /// Calibration coefficients
 #[allow(clippy::module_name_repetitions)] // Using a more informative name
+#[allow(clippy::struct_field_names)] // Using names from datasheet
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct CalibrationData {
     /// First temperature coefficient
@@ -126,9 +127,8 @@ impl CalibrationData {
             0
         } else {
             let var4 = 1_048_576 - i64::from(adc_p);
-            let var4 = ((((var4 as i64) << 31) - var2) * 3125) / var1;
-            let var1 =
-                (i64::from(self.dig_p9) * ((var4 as i64) >> 13) * ((var4 as i64) >> 13)) >> 25;
+            let var4 = (((var4 << 31) - var2) * 3125) / var1;
+            let var1 = (i64::from(self.dig_p9) * (var4 >> 13) * (var4 >> 13)) >> 25;
             let var2 = (i64::from(self.dig_p8) * var4) >> 19;
             let var5 = ((var4 + var1 + var2) >> 8) + (i64::from(self.dig_p7) << 4);
 
@@ -147,7 +147,7 @@ impl CalibrationData {
         let adc_h = i32::from(adc_h);
 
         let v_x1_u32r: i32 = t_fine - 76_800_i32;
-        let v_x1_u32r: i32 = (((((adc_h as i32) << 14)
+        let v_x1_u32r: i32 = ((((adc_h << 14)
             - (i32::from(self.dig_h4) << 20)
             - (i32::from(self.dig_h5) * v_x1_u32r))
             + (16_384_i32))
