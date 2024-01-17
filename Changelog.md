@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Migrate to `embedded-hal` version 1
 
+### Fixed
+
+- Use correct quantity names in log messages
+
 
 ## Version [0.1.0] - 2022-10-29
 

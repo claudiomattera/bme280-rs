@@ -384,7 +384,7 @@ where
         if let Some(t_fine) = self.read_temperature_fine()? {
             self.read_pressure_with_temperature_fine(t_fine)
         } else {
-            warn!("Temperature measurement is disabled");
+            warn!("Pressure measurement is disabled");
             Ok(None)
         }
     }
@@ -455,7 +455,7 @@ where
         if let Some(t_fine) = self.read_temperature_fine()? {
             self.read_humidity_with_temperature_fine(t_fine)
         } else {
-            warn!("Temperature measurement is disabled");
+            warn!("Humidity measurement is disabled");
             Ok(None)
         }
     }
