@@ -11,6 +11,7 @@ license = "MIT OR Apache-2.0"
 keywords = [
     "sensor",
     "i2c",
+    "embedded-hal",
 ]
 categories = [
     "embedded",
@@ -26,8 +27,8 @@ exclude = [
 
 [dependencies]
 log = { version = "0.4" }
-embedded-hal = { version = "0.2" }
+embedded-hal = { version = "1" }
 
 [dev-dependencies]
 assert2 = { version = "0.3" }
-embedded-hal-mock = { version = "0.8" }
+embedded-hal-mock = { version = "0.10", default-features = false, features = ["eh1"] }

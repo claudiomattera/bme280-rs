@@ -10,8 +10,8 @@
 
 use log::{debug, warn};
 
-use embedded_hal::blocking::delay::DelayMs;
-use embedded_hal::blocking::i2c::{Read, Write, WriteRead};
+use embedded_hal::delay::DelayNs;
+use embedded_hal::i2c::I2c;
 
 use crate::calibration;
 use crate::{CalibrationData, Configuration, Status};
@@ -60,8 +60,9 @@ type RawSample = (Option<u32>, Option<u32>, Option<u16>);
 /// Interface to BME280 sensor over I²C
 ///
 /// ```no_run
-/// # use embedded_hal_mock::delay::MockNoop as DelayMock;
-/// # use embedded_hal_mock::i2c::{Mock as I2cMock};
+/// # use embedded_hal_mock::eh1::delay::NoopDelay as DelayMock;
+/// # use embedded_hal_mock::eh1::i2c::Mock as I2cMock;
+/// # use embedded_hal::i2c::ErrorKind;
 /// use bme280_rs::{Bme280, Configuration, Oversampling, SensorMode};
 /// # let i2c = I2cMock::new(&[]);
 /// # let delay = DelayMock;
@@ -82,7 +83,7 @@ type RawSample = (Option<u32>, Option<u32>, Option<u16>);
 /// } else {
 ///     println!("Temperature reading was disabled");
 /// }
-/// # Ok::<(), Box<dyn std::error::Error>>(())
+/// # Ok::<(), ErrorKind>(())
 /// ```
 pub struct Bme280<I2c, Delay> {
     /// I²C device
@@ -101,10 +102,10 @@ pub struct Bme280<I2c, Delay> {
     configuration: Configuration,
 }
 
-impl<I2C, D, E> Bme280<I2C, D>
+impl<I2C, D> Bme280<I2C, D>
 where
-    I2C: Read<Error = E> + Write<Error = E> + WriteRead<Error = E>,
-    D: DelayMs<u32>,
+    I2C: I2c,
+    D: DelayNs,
 {
     /// Create a new sensor using an I²C interface and a delay function using
     /// the sensor's default address [`DEFAULT_ADDRESS`])
@@ -150,7 +151,7 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn init(&mut self) -> Result<(), E> {
+    pub fn init(&mut self) -> Result<(), I2C::Error> {
         debug!("Sending soft-reset signal");
         self.write_u8(BME280_REGISTER_SOFTRESET, BME280_COMMAND_SOFTRESET)?;
 
@@ -183,7 +184,7 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn chip_id(&mut self) -> Result<u8, E> {
+    pub fn chip_id(&mut self) -> Result<u8, I2C::Error> {
         debug!("Read chip id");
         let chip_id = self.read_u8(BME280_REGISTER_CHIPID)?;
 
@@ -195,7 +196,7 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn status(&mut self) -> Result<Status, E> {
+    pub fn status(&mut self) -> Result<Status, I2C::Error> {
         debug!("Read chip status");
         let status = self.read_u8(BME280_REGISTER_STATUS)?.into();
 
@@ -207,7 +208,10 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn set_sampling_configuration(&mut self, configuration: Configuration) -> Result<(), E> {
+    pub fn set_sampling_configuration(
+        &mut self,
+        configuration: Configuration,
+    ) -> Result<(), I2C::Error> {
         self.configuration = configuration;
 
         let (config, ctrl_meas, ctrl_hum) = self.configuration.to_lowlevel_configuration();
@@ -236,7 +240,7 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn take_forced_measurement(&mut self) -> Result<bool, E> {
+    pub fn take_forced_measurement(&mut self) -> Result<bool, I2C::Error> {
         if self.configuration.is_forced() {
             debug!("Forcing taking a measurement");
 
@@ -262,7 +266,7 @@ where
     ///
     /// Raw sample must be converted to human-readable quantities using
     /// compensation formulas from the data sheet.
-    fn read_raw_sample(&mut self) -> Result<RawSample, E> {
+    fn read_raw_sample(&mut self) -> Result<RawSample, I2C::Error> {
         let buffer: [u8; 1] = [BME280_REGISTER_PRESSUREDATA];
         let mut buf: [u8; 8] = [0; 8];
         self.i2c.write_read(self.address, &buffer, &mut buf)?;
@@ -296,7 +300,7 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn read_sample(&mut self) -> Result<Sample, E> {
+    pub fn read_sample(&mut self) -> Result<Sample, I2C::Error> {
         let (adc_t, adc_p, adc_h) = self.read_raw_sample()?;
 
         if let Some(adc_t) = adc_t {
@@ -337,7 +341,7 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn read_temperature(&mut self) -> Result<Option<f32>, E> {
+    pub fn read_temperature(&mut self) -> Result<Option<f32>, I2C::Error> {
         if let Some(t_fine) = self.read_temperature_fine()? {
             Ok(Some(Self::temperature_fine_to_temperature(t_fine)))
         } else {
@@ -346,7 +350,7 @@ where
     }
 
     /// Read temperature from sensor
-    fn read_temperature_fine(&mut self) -> Result<Option<i32>, E> {
+    fn read_temperature_fine(&mut self) -> Result<Option<i32>, I2C::Error> {
         let adc_t = self.read_raw_temperature()?;
         let t_fine = adc_t.map(|adc_t| self.coefficients.compensate_temperature(adc_t));
         Ok(t_fine)
@@ -356,7 +360,7 @@ where
     ///
     /// Raw temperature must be converted to human-readable temperature using
     /// compensation formulas from the data sheet.
-    fn read_raw_temperature(&mut self) -> Result<Option<u32>, E> {
+    fn read_raw_temperature(&mut self) -> Result<Option<u32>, I2C::Error> {
         let adc_t = self.read_u24(BME280_REGISTER_TEMPDATA)?;
 
         if adc_t == 0x80000 {
@@ -376,7 +380,7 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn read_pressure(&mut self) -> Result<Option<f32>, E> {
+    pub fn read_pressure(&mut self) -> Result<Option<f32>, I2C::Error> {
         if let Some(t_fine) = self.read_temperature_fine()? {
             self.read_pressure_with_temperature_fine(t_fine)
         } else {
@@ -396,7 +400,10 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn read_pressure_with_temperature(&mut self, temperature: f32) -> Result<Option<f32>, E> {
+    pub fn read_pressure_with_temperature(
+        &mut self,
+        temperature: f32,
+    ) -> Result<Option<f32>, I2C::Error> {
         #[allow(clippy::cast_possible_truncation)] // Acceptable truncation
         let t = (temperature * 100.0) as i32;
         let t_fine = ((t << 8) - 128) / 5;
@@ -404,7 +411,10 @@ where
     }
 
     /// Read pressure from sensor usings pecific temperature reference
-    fn read_pressure_with_temperature_fine(&mut self, t_fine: i32) -> Result<Option<f32>, E> {
+    fn read_pressure_with_temperature_fine(
+        &mut self,
+        t_fine: i32,
+    ) -> Result<Option<f32>, I2C::Error> {
         let adc_p = self.read_raw_pressure()?;
         let p = adc_p.map(|adc_p| {
             let p = self.coefficients.compensate_pressure(adc_p, t_fine);
@@ -421,7 +431,7 @@ where
     ///
     /// Raw pressure must be converted to human-readable pressure using
     /// compensation formulas from the data sheet.
-    fn read_raw_pressure(&mut self) -> Result<Option<u32>, E> {
+    fn read_raw_pressure(&mut self) -> Result<Option<u32>, I2C::Error> {
         let adc_p = self.read_u24(BME280_REGISTER_PRESSUREDATA)?;
 
         if adc_p == 0x80000 {
@@ -441,7 +451,7 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn read_humidity(&mut self) -> Result<Option<f32>, E> {
+    pub fn read_humidity(&mut self) -> Result<Option<f32>, I2C::Error> {
         if let Some(t_fine) = self.read_temperature_fine()? {
             self.read_humidity_with_temperature_fine(t_fine)
         } else {
@@ -461,7 +471,10 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn read_humidity_with_temperature(&mut self, temperature: f32) -> Result<Option<f32>, E> {
+    pub fn read_humidity_with_temperature(
+        &mut self,
+        temperature: f32,
+    ) -> Result<Option<f32>, I2C::Error> {
         #[allow(clippy::cast_possible_truncation)] // Acceptable truncation
         let t = (temperature * 100.0) as i32;
         let t_fine = ((t << 8) - 128) / 5;
@@ -469,7 +482,10 @@ where
     }
 
     /// Read humidity from sensor using specific reference temperature
-    fn read_humidity_with_temperature_fine(&mut self, t_fine: i32) -> Result<Option<f32>, E> {
+    fn read_humidity_with_temperature_fine(
+        &mut self,
+        t_fine: i32,
+    ) -> Result<Option<f32>, I2C::Error> {
         let adc_h = self.read_raw_humidity()?;
         let h = adc_h.map(|adc_h| {
             let h = self.coefficients.compensate_humidity(adc_h, t_fine);
@@ -486,7 +502,7 @@ where
     ///
     /// Raw humidity must be converted to human-readable humidity using
     /// compensation formulas from the data sheet.
-    fn read_raw_humidity(&mut self) -> Result<Option<u16>, E> {
+    fn read_raw_humidity(&mut self) -> Result<Option<u16>, I2C::Error> {
         let adc_h = self.read_u16(BME280_REGISTER_HUMIDDATA)?;
 
         if adc_h == 0x8000 {
@@ -497,7 +513,7 @@ where
     }
 
     /// Read calibration coefficients from sensor
-    fn read_calibration_coefficients(&mut self) -> Result<(), E> {
+    fn read_calibration_coefficients(&mut self) -> Result<(), I2C::Error> {
         let buffer: [u8; 1] = [calibration::FIRST_REGISTER];
 
         let mut out: [u8; calibration::TOTAL_LENGTH] = [0; calibration::TOTAL_LENGTH];
@@ -520,14 +536,14 @@ where
     }
 
     /// Write an unsigned byte to an I²C register
-    fn write_u8(&mut self, register: u8, value: u8) -> Result<(), E> {
+    fn write_u8(&mut self, register: u8, value: u8) -> Result<(), I2C::Error> {
         let buffer: [u8; 2] = [register, value];
         self.i2c.write(self.address, &buffer)?;
         Ok(())
     }
 
     /// Write an unsigned byte from an I²C register
-    fn read_u8(&mut self, register: u8) -> Result<u8, E> {
+    fn read_u8(&mut self, register: u8) -> Result<u8, I2C::Error> {
         let buffer: [u8; 1] = [register];
         let mut output_buffer: [u8; 1] = [0];
         self.i2c
@@ -536,7 +552,7 @@ where
     }
 
     /// Write two unsigned bytes to an I²C register
-    fn read_u16(&mut self, register: u8) -> Result<u16, E> {
+    fn read_u16(&mut self, register: u8) -> Result<u16, I2C::Error> {
         let buffer: [u8; 1] = [register];
         let mut output_buffer: [u8; 2] = [0, 0];
         self.i2c
@@ -545,7 +561,7 @@ where
     }
 
     /// Write three unsigned bytes to an I²C register
-    fn read_u24(&mut self, register: u8) -> Result<u32, E> {
+    fn read_u24(&mut self, register: u8) -> Result<u32, I2C::Error> {
         let buffer: [u8; 1] = [register];
         let mut output_buffer: [u8; 3] = [0, 0, 0];
         self.i2c
@@ -562,13 +578,15 @@ mod tests {
 
     use assert2::check;
 
-    use embedded_hal_mock::delay::MockNoop as DelayMock;
-    use embedded_hal_mock::i2c::{Mock as I2cMock, Transaction as I2cTransaction};
+    use embedded_hal::i2c::ErrorKind;
+
+    use embedded_hal_mock::eh1::delay::NoopDelay as DelayMock;
+    use embedded_hal_mock::eh1::i2c::{Mock as I2cMock, Transaction as I2cTransaction};
 
     use calibration::TEST_CALIBRATION_DATA;
 
     #[test]
-    fn test_chip_id() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_chip_id() -> Result<(), ErrorKind> {
         let expectations = [I2cTransaction::write_read(
             DEFAULT_ADDRESS,
             vec![BME280_REGISTER_CHIPID],
@@ -582,11 +600,12 @@ mod tests {
 
         check!(chip_id == CHIP_ID);
 
+        bme280.release().done();
         Ok(())
     }
 
     #[test]
-    fn test_chip_status() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_chip_status() -> Result<(), ErrorKind> {
         let expectations = [I2cTransaction::write_read(
             DEFAULT_ADDRESS,
             vec![BME280_REGISTER_STATUS],
@@ -601,11 +620,12 @@ mod tests {
         check!(!status.is_measuring());
         check!(!status.is_calibrating());
 
+        bme280.release().done();
         Ok(())
     }
 
     #[test]
-    fn test_chip_status_measuring() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_chip_status_measuring() -> Result<(), ErrorKind> {
         let expectations = [I2cTransaction::write_read(
             DEFAULT_ADDRESS,
             vec![BME280_REGISTER_STATUS],
@@ -620,11 +640,12 @@ mod tests {
         check!(status.is_measuring());
         check!(!status.is_calibrating());
 
+        bme280.release().done();
         Ok(())
     }
 
     #[test]
-    fn test_read_temperature_disabled() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_read_temperature_disabled() -> Result<(), ErrorKind> {
         let expectations = [I2cTransaction::write_read(
             DEFAULT_ADDRESS,
             vec![BME280_REGISTER_TEMPDATA],
@@ -645,11 +666,12 @@ mod tests {
 
         check!(temperature == expected);
 
+        bme280.release().done();
         Ok(())
     }
 
     #[test]
-    fn test_read_temperature() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_read_temperature() -> Result<(), ErrorKind> {
         let expectations = [I2cTransaction::write_read(
             DEFAULT_ADDRESS,
             vec![BME280_REGISTER_TEMPDATA],
@@ -670,11 +692,12 @@ mod tests {
 
         check!(temperature == expected);
 
+        bme280.release().done();
         Ok(())
     }
 
     #[test]
-    fn test_read_pressure_disabled() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_read_pressure_disabled() -> Result<(), ErrorKind> {
         let expectations = [
             I2cTransaction::write_read(
                 DEFAULT_ADDRESS,
@@ -702,11 +725,12 @@ mod tests {
 
         check!(pressure == expected);
 
+        bme280.release().done();
         Ok(())
     }
 
     #[test]
-    fn test_read_pressure() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_read_pressure() -> Result<(), ErrorKind> {
         let expectations = [
             I2cTransaction::write_read(
                 DEFAULT_ADDRESS,
@@ -734,11 +758,12 @@ mod tests {
 
         check!(pressure == expected);
 
+        bme280.release().done();
         Ok(())
     }
 
     #[test]
-    fn test_read_humidity_disabled() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_read_humidity_disabled() -> Result<(), ErrorKind> {
         let expectations = [
             I2cTransaction::write_read(
                 DEFAULT_ADDRESS,
@@ -766,11 +791,12 @@ mod tests {
 
         check!(humidity == expected);
 
+        bme280.release().done();
         Ok(())
     }
 
     #[test]
-    fn test_read_humidity() -> Result<(), Box<dyn std::error::Error>> {
+    fn test_read_humidity() -> Result<(), ErrorKind> {
         let expectations = [
             I2cTransaction::write_read(
                 DEFAULT_ADDRESS,
@@ -798,6 +824,7 @@ mod tests {
 
         check!(humidity == expected);
 
+        bme280.release().done();
         Ok(())
     }
 }
