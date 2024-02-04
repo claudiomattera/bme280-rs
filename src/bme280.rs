@@ -540,9 +540,9 @@ where
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    #![allow(clippy::panic_in_result_fn)]
 
-    use assert2::check;
+    use super::*;
 
     use embedded_hal::i2c::ErrorKind;
 
@@ -565,7 +565,7 @@ mod tests {
 
         let chip_id = bme280.chip_id()?;
 
-        check!(chip_id == CHIP_ID);
+        assert_eq!(chip_id, CHIP_ID);
 
         bme280.release().done();
         Ok(())
@@ -584,8 +584,8 @@ mod tests {
 
         let status = bme280.status()?;
 
-        check!(!status.is_measuring());
-        check!(!status.is_calibrating());
+        assert!(!status.is_measuring());
+        assert!(!status.is_calibrating());
 
         bme280.release().done();
         Ok(())
@@ -604,8 +604,8 @@ mod tests {
 
         let status = bme280.status()?;
 
-        check!(status.is_measuring());
-        check!(!status.is_calibrating());
+        assert!(status.is_measuring());
+        assert!(!status.is_calibrating());
 
         bme280.release().done();
         Ok(())
@@ -631,7 +631,7 @@ mod tests {
 
         let temperature = bme280.read_temperature()?;
 
-        check!(temperature == expected);
+        assert_eq!(temperature, expected);
 
         bme280.release().done();
         Ok(())
@@ -657,7 +657,7 @@ mod tests {
 
         let temperature = bme280.read_temperature()?;
 
-        check!(temperature == expected);
+        assert_eq!(temperature, expected);
 
         bme280.release().done();
         Ok(())
@@ -690,7 +690,7 @@ mod tests {
 
         let pressure = bme280.read_pressure()?;
 
-        check!(pressure == expected);
+        assert_eq!(pressure, expected);
 
         bme280.release().done();
         Ok(())
@@ -723,7 +723,7 @@ mod tests {
 
         let pressure = bme280.read_pressure()?;
 
-        check!(pressure == expected);
+        assert_eq!(pressure, expected);
 
         bme280.release().done();
         Ok(())
@@ -756,7 +756,7 @@ mod tests {
 
         let humidity = bme280.read_humidity()?;
 
-        check!(humidity == expected);
+        assert_eq!(humidity, expected);
 
         bme280.release().done();
         Ok(())
@@ -789,7 +789,7 @@ mod tests {
 
         let humidity = bme280.read_humidity()?;
 
-        check!(humidity == expected);
+        assert_eq!(humidity, expected);
 
         bme280.release().done();
         Ok(())

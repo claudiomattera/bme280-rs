@@ -403,8 +403,6 @@ impl From<ControlMeasurement> for u8 {
 mod tests {
     use super::*;
 
-    use assert2::check;
-
     #[test]
     fn test_status() {
         let raw_status = 0b0000_0000;
@@ -415,7 +413,7 @@ mod tests {
             calibrating: false,
         };
 
-        check!(status == expected);
+        assert_eq!(status, expected);
     }
 
     #[test]
@@ -428,7 +426,7 @@ mod tests {
             calibrating: true,
         };
 
-        check!(status == expected);
+        assert_eq!(status, expected);
     }
 
     #[test]
@@ -438,7 +436,7 @@ mod tests {
         let expected = 0b010;
         let actual = standby.to_value();
 
-        check!(actual == expected, "0b{:03b} == 0b{:03b}", actual, expected);
+        assert_eq!(actual, expected, "0b{actual:03b} == 0b{expected:03b}");
     }
 
     #[test]
@@ -452,7 +450,7 @@ mod tests {
 
         let expected = 0b0100_0101;
 
-        check!(actual == expected, "0b{:08b} == 0b{:08b}", actual, expected);
+        assert_eq!(actual, expected, "0b{actual:08b} == 0b{expected:08b}");
     }
 
     #[test]
@@ -466,7 +464,7 @@ mod tests {
 
         let expected = 0b1000_1111;
 
-        check!(actual == expected, "0b{:08b} == 0b{:08b}", actual, expected);
+        assert_eq!(actual, expected, "0b{actual:08b} == 0b{expected:08b}");
     }
 
     #[test]
@@ -478,6 +476,6 @@ mod tests {
 
         let expected = 0b100;
 
-        check!(actual == expected, "0b{:03b} == 0b{:03b}", actual, expected);
+        assert_eq!(actual, expected, "0b{actual:03b} == 0b{expected:03b}");
     }
 }
