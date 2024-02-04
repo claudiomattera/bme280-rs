@@ -18,6 +18,8 @@ This crate support both [`embedded-hal`][embedded-hal] and [`embedded-hal-async`
 [embedded-hal]: https://crates.io/crates/embedded-hal
 [embedded-hal-async]: https://crates.io/crates/embedded-hal-async
 
+See the [changelog](./CHANGELOG.md) for this project.
+
 
 Usage
 ----
