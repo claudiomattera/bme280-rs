@@ -28,10 +28,11 @@ exclude = [
 [dependencies]
 log = { version = "0.4" }
 embedded-hal = { version = "1" }
+embedded-hal-async = { version = "1" }
 
 [dev-dependencies]
 assert2 = { version = "0.3" }
-embedded-hal-mock = { version = "0.10", default-features = false, features = ["eh1"] }
+embedded-hal-mock = { version = "0.10", default-features = false, features = ["eh1", "embedded-hal-async"] }
 
 [lints.rust]
 missing_docs = "deny"

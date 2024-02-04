@@ -7,6 +7,11 @@ A Rust crate to query temperature, pressure and humidity from sensor [BME280]
 
 [BME280]: https://www.bosch-sensortec.com/products/environmental-sensors/humidity-sensors-bme280/
 
+This crate support both [`embedded-hal`][embedded-hal] and [`embedded-hal-async`][embedded-hal-async].
+
+[embedded-hal]: https://crates.io/crates/embedded-hal
+[embedded-hal-async]: https://crates.io/crates/embedded-hal-async
+
 
 Usage
 ----
@@ -40,6 +45,34 @@ bme280.set_sampling_configuration(
 )?;
 
 if let Some(temperature) = bme280.read_temperature()? {
+    println!("Temperature: {} C", temperature);
+} else {
+    println!("Temperature reading was disabled");
+}
+~~~~
+
+An `AsyncBme280` structure can be used with asynchronous HALs.
+Its API is completely identical to `Bme280`, just with `.async` at the end of function calls.
+
+~~~~rust
+use bme280_rs::{AsyncBme280, Configuration, Oversampling, SensorMode};
+
+let i2c = ...
+let delay = ...
+
+let mut bme280 = AsyncBme280::new(i2c, delay);
+
+bme280.init()?;
+
+bme280.set_sampling_configuration(
+    Configuration::default()
+        .with_temperature_oversampling(Oversampling::Oversample1)
+        .with_pressure_oversampling(Oversampling::Oversample1)
+        .with_humidity_oversampling(Oversampling::Oversample1)
+        .with_sensor_mode(SensorMode::Normal)
+).await?;
+
+if let Some(temperature) = bme280.read_temperature().await? {
     println!("Temperature: {} C", temperature);
 } else {
     println!("Temperature reading was disabled");
