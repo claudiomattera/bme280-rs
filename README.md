@@ -2,10 +2,10 @@ Rust BME280 Crate
 ====
 
 ![Version](https://img.shields.io/crates/v/bme280-rs)
-![Documentation](https://img.shields.io/docsrs/bme280-rs/0.1.0)
-![Downloads](https://img.shields.io/crates/dv/bme280-rs/0.1.0)
-![License](https://img.shields.io/crates/l/bme280-rs/0.1.0)
-![MSRV](https://img.shields.io/crates/msrv/bme280-rs/0.1.0)
+![Documentation](https://img.shields.io/docsrs/bme280-rs/0.2.0)
+![Downloads](https://img.shields.io/crates/dv/bme280-rs/0.2.0)
+![License](https://img.shields.io/crates/l/bme280-rs/0.2.0)
+![MSRV](https://img.shields.io/crates/msrv/bme280-rs/0.2.0)
 
 A Rust crate to query temperature, pressure and humidity from sensor [BME280]
 
