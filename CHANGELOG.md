@@ -8,9 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Add support for `embedded-hal-async` version 1
+
 ### Changed
 
 - Migrate to `embedded-hal` version 1
+- Use structured data for samples
 
 ### Fixed
 
