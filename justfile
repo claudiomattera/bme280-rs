@@ -22,12 +22,12 @@ format: fetch
     @just cargo fmt --all
 
 # Type-check source code
-check: fetch
-    @just cargo check --frozen --all-targets --all-features
+check +args='--all-features': fetch
+    @just cargo check --frozen --all-targets {{args}}
 
 # Check lints with Clippy
-lint: check
-    @just cargo clippy --frozen --all-targets --all-features
+lint +args='--all-features': (check args)
+    @just cargo clippy --frozen --all-targets {{args}}
 
 # Build
 build +args='--all-features': fetch
