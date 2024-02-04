@@ -119,8 +119,8 @@ where
 
     /// Obtain the chip id
     ///
-    /// The chip id is always [`CHIP_ID`], so this function can be used
-    /// to validate that communication with the chip works fine.
+    /// The chip id is always [`crate::constants::CHIP_ID`], so this function
+    /// can be used to validate that communication with the chip works fine.
     ///
     /// # Errors
     ///
