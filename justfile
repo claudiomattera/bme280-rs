@@ -11,7 +11,7 @@ cargo +args:
 
 # Fetch dependencies
 fetch:
-    @just cargo fetch --locked
+    @just cargo fetch
 
 # Check source code format
 check-format: fetch
