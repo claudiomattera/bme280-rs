@@ -29,4 +29,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial implementation.
 
-[0.1.0]: https://gitlab.com/claudiomattera/bme280-rs/-/tags/0.1.0
+[0.1.0]: https://gitlab.com/claudiomattera/bme280-rs/-/tags/v0.1.0

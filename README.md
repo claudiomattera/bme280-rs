@@ -93,7 +93,7 @@ By default, this crate uses `f32` values for all the measurements temperature, p
 When instead enabling the Cargo feature `uom`, it uses quantities from crate [uom].
 Temperature measurements have type `uom::si::f32::ThermodynamicTemperature`, pressure measurements have type `uom::si::f32::Pressure`, and humidity measurements have type `uom::si::f32::Ratio`.
 
-[uom]: crates.io/crates/uom
+[uom]: https://crates.io/crates/uom
 
 
 License
@@ -105,7 +105,7 @@ Copyright Claudio Mattera 2022-2024
 You are free to copy, modify, and distribute this application with attribution under the terms of either
 
  * Apache License, Version 2.0
-   ([LICENSE-Apache-2.0](./LICENSE-APACHE-2.0.txt) or <https://opensource.org/licenses/Apache-2.0>)
+   ([LICENSE-APACHE-2.0](./LICENSE-APACHE-2.0.txt) or <https://opensource.org/licenses/Apache-2.0>)
  * MIT license
    ([LICENSE-MIT](./LICENSE-MIT.txt) or <https://opensource.org/licenses/MIT>)
 
