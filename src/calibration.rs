@@ -177,7 +177,7 @@ impl CalibrationData {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "blocking"))]
 pub use tests::TEST_CALIBRATION_DATA;
 
 #[cfg(test)]
