@@ -21,9 +21,10 @@ categories = [
 publish = true
 exclude = [
     ".gitattributes",
+    ".gitignore",
     ".drone.yml",
     ".pre-commit-config.yaml",
-    "Makefile.toml",
+    "justfile",
 ]
 
 [features]
