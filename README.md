@@ -107,9 +107,9 @@ Copyright Claudio Mattera 2022-2024
 You are free to copy, modify, and distribute this application with attribution under the terms of either
 
  * Apache License, Version 2.0
-   ([LICENSE-APACHE-2.0](./LICENSE-APACHE-2.0.txt) or <https://opensource.org/licenses/Apache-2.0>)
+   (file [`LICENSE-APACHE-2.0.txt`](./LICENSE-APACHE-2.0.txt) or <https://opensource.org/licenses/Apache-2.0>)
  * MIT license
-   ([LICENSE-MIT](./LICENSE-MIT.txt) or <https://opensource.org/licenses/MIT>)
+   (file [`LICENSE-MIT.txt`](./LICENSE-MIT.txt) or <https://opensource.org/licenses/MIT>)
 
 at your option.
 
