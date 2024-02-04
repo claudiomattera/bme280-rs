@@ -18,7 +18,8 @@ use crate::constants::{
     BME280_COMMAND_SOFTRESET, BME280_REGISTER_CHIPID, BME280_REGISTER_CONFIG,
     BME280_REGISTER_CONTROL, BME280_REGISTER_CONTROLHUMID, BME280_REGISTER_HUMIDDATA,
     BME280_REGISTER_PRESSUREDATA, BME280_REGISTER_SOFTRESET, BME280_REGISTER_STATUS,
-    BME280_REGISTER_TEMPDATA, DEFAULT_ADDRESS, MODE_SLEEP,
+    BME280_REGISTER_TEMPDATA, DEFAULT_ADDRESS, MODE_SLEEP, SKIPPED_HUMIDITY_OUTPUT,
+    SKIPPED_PRESSURE_OUTPUT, SKIPPED_TEMPERATURE_OUTPUT,
 };
 use crate::sample::{RawSample, Sample};
 use crate::{CalibrationData, Configuration, Status};
@@ -229,9 +230,21 @@ where
         let adc_h: u16 = (u16::from(buf[6]) << 8) | u16::from(buf[7]);
 
         Ok(RawSample {
-            adc_t: if adc_t == 0x80000 { None } else { Some(adc_t) },
-            adc_p: if adc_p == 0x80000 { None } else { Some(adc_p) },
-            adc_h: if adc_h == 0x8000 { None } else { Some(adc_h) },
+            adc_t: if adc_t == SKIPPED_TEMPERATURE_OUTPUT {
+                None
+            } else {
+                Some(adc_t)
+            },
+            adc_p: if adc_p == SKIPPED_PRESSURE_OUTPUT {
+                None
+            } else {
+                Some(adc_p)
+            },
+            adc_h: if adc_h == SKIPPED_HUMIDITY_OUTPUT {
+                None
+            } else {
+                Some(adc_h)
+            },
         })
     }
 
@@ -314,7 +327,7 @@ where
     async fn read_raw_temperature(&mut self) -> Result<Option<u32>, I2C::Error> {
         let adc_t = self.read_u24(BME280_REGISTER_TEMPDATA).await?;
 
-        if adc_t == 0x80000 {
+        if adc_t == SKIPPED_TEMPERATURE_OUTPUT {
             Ok(None)
         } else {
             Ok(Some(adc_t))
@@ -385,7 +398,7 @@ where
     async fn read_raw_pressure(&mut self) -> Result<Option<u32>, I2C::Error> {
         let adc_p = self.read_u24(BME280_REGISTER_PRESSUREDATA).await?;
 
-        if adc_p == 0x80000 {
+        if adc_p == SKIPPED_PRESSURE_OUTPUT {
             Ok(None)
         } else {
             Ok(Some(adc_p))
@@ -456,7 +469,7 @@ where
     async fn read_raw_humidity(&mut self) -> Result<Option<u16>, I2C::Error> {
         let adc_h = self.read_u16(BME280_REGISTER_HUMIDDATA).await?;
 
-        if adc_h == 0x8000 {
+        if adc_h == SKIPPED_HUMIDITY_OUTPUT {
             Ok(None)
         } else {
             Ok(Some(adc_h))

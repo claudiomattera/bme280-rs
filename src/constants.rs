@@ -38,3 +38,12 @@ pub(crate) const BME280_COMMAND_SOFTRESET: u8 = 0xB6;
 
 /// Bitmask for sleep mode
 pub(crate) const MODE_SLEEP: u8 = 0b00;
+
+/// Temperature output value when measurement was skipped
+pub(crate) const SKIPPED_TEMPERATURE_OUTPUT: u32 = 0x80000;
+
+/// Temperature output value when measurement was skipped
+pub(crate) const SKIPPED_PRESSURE_OUTPUT: u32 = 0x80000;
+
+/// Temperature output value when measurement was skipped
+pub(crate) const SKIPPED_HUMIDITY_OUTPUT: u16 = 0x8000;
