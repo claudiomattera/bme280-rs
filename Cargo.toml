@@ -31,11 +31,13 @@ exclude = [
 default = ["blocking", "async"]
 blocking = ["dep:embedded-hal"]
 async = ["dep:embedded-hal-async"]
+uom = ["dep:uom"]
 
 [dependencies]
 log = { version = "0.4", default-features = false }
 embedded-hal = { version = "1", default-features = false, optional = true }
 embedded-hal-async = { version = "1", default-features = false, optional = true }
+uom = { version = "0.33", default-features = false, features = ["f32", "si"], optional = true }
 
 [dev-dependencies]
 embedded-hal-mock = { version = "0.10", default-features = false, features = ["eh1", "embedded-hal-async"] }

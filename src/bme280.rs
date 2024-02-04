@@ -21,7 +21,10 @@ use crate::constants::{
     BME280_REGISTER_TEMPDATA, DEFAULT_ADDRESS, MODE_SLEEP, SKIPPED_HUMIDITY_OUTPUT,
     SKIPPED_PRESSURE_OUTPUT, SKIPPED_TEMPERATURE_OUTPUT,
 };
-use crate::sample::{RawSample, Sample};
+use crate::sample::{
+    humidity_from_number, pressure_from_pascal, temperature_from_celsius, Humidity, Pressure,
+    RawSample, Sample, Temperature,
+};
 use crate::{CalibrationData, Configuration, Status};
 
 /// Interface to BME280 sensor over I²C
@@ -46,7 +49,7 @@ use crate::{CalibrationData, Configuration, Status};
 /// bme280.set_sampling_configuration(configuration)?;
 ///
 /// if let Some(temperature) = bme280.read_temperature()? {
-///     println!("Temperature: {} C", temperature);
+///     println!("Temperature: {:?}", temperature);
 /// } else {
 ///     println!("Temperature reading was disabled");
 /// }
@@ -296,8 +299,10 @@ where
 
             #[allow(clippy::cast_precision_loss)] // Acceptable precision loss
             let pressure = p.map(|p| p as f32 / 256.0);
+            let pressure = pressure.map(pressure_from_pascal);
             #[allow(clippy::cast_precision_loss)] // Acceptable precision loss
             let humidity = h.map(|h| h as f32 / 1024.0);
+            let humidity = humidity.map(humidity_from_number);
 
             Ok(Sample {
                 temperature,
@@ -312,13 +317,13 @@ where
     }
 
     /// Compute raw temperature from human-readable temperature
-    fn temperature_fine_to_temperature(t_fine: i32) -> f32 {
+    fn temperature_fine_to_temperature(t_fine: i32) -> Temperature {
         let t = (t_fine * 5 + 128) >> 8;
 
         #[allow(clippy::cast_precision_loss)] // Acceptable precision loss
         let t = t as f32;
 
-        t / 100.0
+        temperature_from_celsius(t / 100.0)
     }
 
     /// Read a sample of temperature
@@ -328,7 +333,7 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn read_temperature(&mut self) -> Result<Option<f32>, I2C::Error> {
+    pub fn read_temperature(&mut self) -> Result<Option<Temperature>, I2C::Error> {
         if let Some(t_fine) = self.read_temperature_fine()? {
             Ok(Some(Self::temperature_fine_to_temperature(t_fine)))
         } else {
@@ -367,7 +372,7 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn read_pressure(&mut self) -> Result<Option<f32>, I2C::Error> {
+    pub fn read_pressure(&mut self) -> Result<Option<Pressure>, I2C::Error> {
         if let Some(t_fine) = self.read_temperature_fine()? {
             self.read_pressure_with_temperature_fine(t_fine)
         } else {
@@ -390,7 +395,7 @@ where
     pub fn read_pressure_with_temperature(
         &mut self,
         temperature: f32,
-    ) -> Result<Option<f32>, I2C::Error> {
+    ) -> Result<Option<Pressure>, I2C::Error> {
         #[allow(clippy::cast_possible_truncation)] // Acceptable truncation
         let t = (temperature * 100.0) as i32;
         let t_fine = ((t << 8) - 128) / 5;
@@ -401,7 +406,7 @@ where
     fn read_pressure_with_temperature_fine(
         &mut self,
         t_fine: i32,
-    ) -> Result<Option<f32>, I2C::Error> {
+    ) -> Result<Option<Pressure>, I2C::Error> {
         let adc_p = self.read_raw_pressure()?;
         let p = adc_p.map(|adc_p| {
             let p = self.coefficients.compensate_pressure(adc_p, t_fine);
@@ -409,7 +414,7 @@ where
             #[allow(clippy::cast_precision_loss)] // Acceptable precision loss
             let p = p as f32;
 
-            p / 256.0
+            pressure_from_pascal(p / 256.0)
         });
         Ok(p)
     }
@@ -438,7 +443,7 @@ where
     /// # Errors
     ///
     /// Return an error if it cannot communicate with the sensor.
-    pub fn read_humidity(&mut self) -> Result<Option<f32>, I2C::Error> {
+    pub fn read_humidity(&mut self) -> Result<Option<Humidity>, I2C::Error> {
         if let Some(t_fine) = self.read_temperature_fine()? {
             self.read_humidity_with_temperature_fine(t_fine)
         } else {
@@ -461,7 +466,7 @@ where
     pub fn read_humidity_with_temperature(
         &mut self,
         temperature: f32,
-    ) -> Result<Option<f32>, I2C::Error> {
+    ) -> Result<Option<Humidity>, I2C::Error> {
         #[allow(clippy::cast_possible_truncation)] // Acceptable truncation
         let t = (temperature * 100.0) as i32;
         let t_fine = ((t << 8) - 128) / 5;
@@ -472,7 +477,7 @@ where
     fn read_humidity_with_temperature_fine(
         &mut self,
         t_fine: i32,
-    ) -> Result<Option<f32>, I2C::Error> {
+    ) -> Result<Option<Humidity>, I2C::Error> {
         let adc_h = self.read_raw_humidity()?;
         let h = adc_h.map(|adc_h| {
             let h = self.coefficients.compensate_humidity(adc_h, t_fine);
@@ -480,7 +485,7 @@ where
             #[allow(clippy::cast_precision_loss)] // Acceptable precision loss
             let h = h as f32;
 
-            h / 1024.0
+            humidity_from_number(h / 1024.0)
         });
         Ok(h)
     }
@@ -674,7 +679,7 @@ mod tests {
             TEST_CALIBRATION_DATA.clone(),
         );
 
-        let expected = Some(27.33);
+        let expected = Some(temperature_from_celsius(27.33));
 
         let temperature = bme280.read_temperature()?;
 
@@ -740,7 +745,7 @@ mod tests {
             TEST_CALIBRATION_DATA.clone(),
         );
 
-        let expected = Some(101_233.016);
+        let expected = Some(pressure_from_pascal(101_233.016));
 
         let pressure = bme280.read_pressure()?;
 
@@ -806,7 +811,7 @@ mod tests {
             TEST_CALIBRATION_DATA.clone(),
         );
 
-        let expected = Some(34.854_492);
+        let expected = Some(humidity_from_number(34.854_492));
 
         let humidity = bme280.read_humidity()?;
 

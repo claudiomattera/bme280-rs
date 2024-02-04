@@ -80,6 +80,16 @@ if let Some(temperature) = bme280.read_temperature().await? {
 ~~~~
 
 
+Unit of Measurements
+----
+
+By default, this crate uses `f32` values for all the measurements temperature, pressure and humidity.
+When instead enabling the Cargo feature `uom`, it uses quantities from crate [uom].
+Temperature measurements have type `uom::si::f32::ThermodynamicTemperature`, pressure measurements have type `uom::si::f32::Pressure`, and humidity measurements have type `uom::si::f32::Ratio`.
+
+[uom]: crates.io/crates/uom
+
+
 License
 ----
 

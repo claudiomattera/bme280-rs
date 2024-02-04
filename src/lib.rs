@@ -39,4 +39,4 @@ pub use self::constants::{CHIP_ID, DEFAULT_ADDRESS};
 #[cfg(any(feature = "async", feature = "blocking"))]
 mod sample;
 #[cfg(any(feature = "async", feature = "blocking"))]
-pub use self::sample::Sample;
+pub use self::sample::{Humidity, Pressure, Sample, Temperature};
