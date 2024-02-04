@@ -8,6 +8,7 @@ readme = "README.md"
 homepage = "https://gitlab.com/claudiomattera/bme280-rs"
 repository = "https://gitlab.com/claudiomattera/bme280-rs"
 license = "MIT OR Apache-2.0"
+rust-version = "1.75"
 keywords = [
     "sensor",
     "i2c",
