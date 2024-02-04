@@ -228,11 +228,11 @@ where
         // lsb [7:0] = h[7:0]
         let adc_h: u16 = (u16::from(buf[6]) << 8) | u16::from(buf[7]);
 
-        Ok((
-            if adc_t == 0x80000 { None } else { Some(adc_t) },
-            if adc_p == 0x80000 { None } else { Some(adc_p) },
-            if adc_h == 0x8000 { None } else { Some(adc_h) },
-        ))
+        Ok(RawSample {
+            adc_t: if adc_t == 0x80000 { None } else { Some(adc_t) },
+            adc_p: if adc_p == 0x80000 { None } else { Some(adc_p) },
+            adc_h: if adc_h == 0x8000 { None } else { Some(adc_h) },
+        })
     }
 
     /// Read a sample of temperature, pressure and humidity
@@ -244,7 +244,11 @@ where
     ///
     /// Return an error if it cannot communicate with the sensor.
     pub async fn read_sample(&mut self) -> Result<Sample, I2C::Error> {
-        let (adc_t, adc_p, adc_h) = self.read_raw_sample().await?;
+        let RawSample {
+            adc_t,
+            adc_p,
+            adc_h,
+        } = self.read_raw_sample().await?;
 
         if let Some(adc_t) = adc_t {
             let t_fine = self.coefficients.compensate_temperature(adc_t);
@@ -259,11 +263,15 @@ where
             #[allow(clippy::cast_precision_loss)] // Acceptable precision loss
             let humidity = h.map(|h| h as f32 / 1024.0);
 
-            Ok((temperature, pressure, humidity))
+            Ok(Sample {
+                temperature,
+                pressure,
+                humidity,
+            })
         } else {
             warn!("Temperature measurement is disabled");
 
-            Ok((None, None, None))
+            Ok(Sample::default())
         }
     }
 

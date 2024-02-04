@@ -11,9 +11,30 @@
 /// A full sample: temperature, pressure and humidity
 ///
 /// Disabled measures are `None`.
-pub type Sample = (Option<f32>, Option<f32>, Option<f32>);
+#[derive(Debug, Default)]
+pub struct Sample {
+    /// Temperature reading
+    pub temperature: Option<f32>,
+
+    /// Pressure reading
+    pub pressure: Option<f32>,
+
+    /// Humidity reading
+    pub humidity: Option<f32>,
+}
 
 /// A full raw sample before compensation: temperature, pressure and humidity
 ///
 /// Disabled measures are `None`.
-pub(crate) type RawSample = (Option<u32>, Option<u32>, Option<u16>);
+#[derive(Debug, Default)]
+#[allow(clippy::struct_field_names)]
+pub(crate) struct RawSample {
+    /// Temperature raw reading
+    pub(crate) adc_t: Option<u32>,
+
+    /// Pressure raw reading
+    pub(crate) adc_p: Option<u32>,
+
+    /// Humidity raw reading
+    pub(crate) adc_h: Option<u16>,
+}
