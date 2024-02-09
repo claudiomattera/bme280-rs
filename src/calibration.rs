@@ -1,4 +1,4 @@
-// Copyright Claudio Mattera 2022.
+// Copyright Claudio Mattera 2022-2024.
 //
 // Distributed under the MIT License or the Apache 2.0 License at your option.
 // See the accompanying files License-MIT.txt and License-Apache-2.0.txt, or
@@ -23,6 +23,7 @@ pub const TOTAL_LENGTH: usize = FIRST_LENGTH + SECOND_LENGTH;
 
 /// Calibration coefficients
 #[allow(clippy::module_name_repetitions)] // Using a more informative name
+#[allow(clippy::struct_field_names)] // Using names from datasheet
 #[derive(Clone, Debug, Default, Eq, PartialEq)]
 pub struct CalibrationData {
     /// First temperature coefficient
@@ -126,9 +127,8 @@ impl CalibrationData {
             0
         } else {
             let var4 = 1_048_576 - i64::from(adc_p);
-            let var4 = ((((var4 as i64) << 31) - var2) * 3125) / var1;
-            let var1 =
-                (i64::from(self.dig_p9) * ((var4 as i64) >> 13) * ((var4 as i64) >> 13)) >> 25;
+            let var4 = (((var4 << 31) - var2) * 3125) / var1;
+            let var1 = (i64::from(self.dig_p9) * (var4 >> 13) * (var4 >> 13)) >> 25;
             let var2 = (i64::from(self.dig_p8) * var4) >> 19;
             let var5 = ((var4 + var1 + var2) >> 8) + (i64::from(self.dig_p7) << 4);
 
@@ -147,7 +147,7 @@ impl CalibrationData {
         let adc_h = i32::from(adc_h);
 
         let v_x1_u32r: i32 = t_fine - 76_800_i32;
-        let v_x1_u32r: i32 = (((((adc_h as i32) << 14)
+        let v_x1_u32r: i32 = ((((adc_h << 14)
             - (i32::from(self.dig_h4) << 20)
             - (i32::from(self.dig_h5) * v_x1_u32r))
             + (16_384_i32))
@@ -177,14 +177,12 @@ impl CalibrationData {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "blocking"))]
 pub use tests::TEST_CALIBRATION_DATA;
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    use assert2::check;
 
     pub const TEST_CALIBRATION_DATA: CalibrationData = CalibrationData {
         dig_t1: 0x6fb1_u16,
@@ -219,7 +217,7 @@ mod tests {
 
         let coefficients = CalibrationData::from(&raw_register_data);
 
-        check!(coefficients == TEST_CALIBRATION_DATA);
+        assert_eq!(coefficients, TEST_CALIBRATION_DATA);
     }
 
     #[test]
@@ -229,7 +227,7 @@ mod tests {
         let actual = TEST_CALIBRATION_DATA.compensate_temperature(adc_t);
         let expected = 0x22391;
 
-        check!(actual == expected, "0x{:08X} == 0x{:08X}", actual, expected);
+        assert_eq!(actual, expected, "0x{actual:08X} == 0x{expected:08X}");
     }
 
     #[test]
@@ -240,7 +238,7 @@ mod tests {
         let actual = TEST_CALIBRATION_DATA.compensate_pressure(adc_p, t_fine);
         let expected = 0x018b_663f;
 
-        check!(actual == expected, "0x{:08X} == 0x{:08X}", actual, expected);
+        assert_eq!(actual, expected, "0x{actual:08X} == 0x{expected:08X}");
     }
 
     #[test]
@@ -251,6 +249,6 @@ mod tests {
         let actual = TEST_CALIBRATION_DATA.compensate_humidity(adc_h, t_fine);
         let expected = 0x8399;
 
-        check!(actual == expected, "0x{:08X} == 0x{:08X}", actual, expected);
+        assert_eq!(actual, expected, "0x{actual:08X} == 0x{expected:08X}");
     }
 }

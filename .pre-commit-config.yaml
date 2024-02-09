@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.2.0
+    rev: v4.5.0
     hooks:
     -   id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
@@ -19,6 +19,9 @@ repos:
     -   id: check-executables-have-shebangs
     -   id: check-shebang-scripts-are-executable
 
+    -   id: check-vcs-permalinks
+    -   id: fix-byte-order-marker
+
     -   id: check-case-conflict
     -   id: check-merge-conflict
     -   id: check-symlinks
@@ -32,3 +35,15 @@ repos:
         name: check Rust source format
     -   id: cargo-check
         name: check crate structure
+
+-   repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.1
+    hooks:
+    -   id: gitleaks
+        name: detect secrets
+
+-   repo: https://github.com/crate-ci/typos
+    rev: v1.17.1
+    hooks:
+    -   id: typos
+        name: check spelling

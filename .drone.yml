@@ -43,44 +43,45 @@ steps:
 - name: download dependencies
   image: docker.claudiomattera.it/claudiomattera/rust:1
   commands:
-  - cargo make --disable-check-for-updates fetch
+  - just fetch
 
 - name: check format
   failure: ignore
   image: docker.claudiomattera.it/claudiomattera/rust:1
   commands:
-  - cargo make --disable-check-for-updates check-format
+  - just check-format
 
 - name: run linter
   failure: ignore
   image: docker.claudiomattera.it/claudiomattera/rust:1
   commands:
-  - cargo make --disable-check-for-updates lint
+  - just lint
 
 - name: build
   image: docker.claudiomattera.it/claudiomattera/rust:1
   commands:
-  - cargo make --disable-check-for-updates build
+  - just build
 
 - name: build tests
   image: docker.claudiomattera.it/claudiomattera/rust:1
   commands:
-  - cargo make --disable-check-for-updates build-tests
+  - just build-tests
 
 - name: test
   image: docker.claudiomattera.it/claudiomattera/rust:1
   commands:
-  - cargo make --disable-check-for-updates test
+  - just test
 
 - name: build documentation
   image: docker.claudiomattera.it/claudiomattera/rust:1
   commands:
-  - cargo make --disable-check-for-updates build-documentation
+  - just build-documentation
 
 - name: prepare cache
   image: docker.claudiomattera.it/claudiomattera/rust:1
   commands:
-  - cargo make --disable-check-for-updates prepare-cache
+  - find ./target/debug -maxdepth 1 -type f -and -not -name xtask.exe -delete
+  - rm -rf ./target/.rustc_info.json
 
 - name: rebuild cache
   image: plugins/s3-cache
@@ -129,9 +130,11 @@ steps:
     - promote
     target:
     - crates.io
-  image: docker.claudiomattera.it/claudiomattera/rust:1
+  image: docker-proxy.claudiomattera.it/library/rust:1
   commands:
-  - cargo make publish
+  - cargo login "${CRATES_IO_TOKEN}"
+  - cargo publish
+  - cargo logout
 
 ---
 kind: pipeline
@@ -228,7 +231,7 @@ steps:
 - name: check security advisories
   image: docker.claudiomattera.it/claudiomattera/rust:1
   commands:
-  - cargo make --disable-check-for-updates audit
+  - just audit
 
 - name: notification
   depends_on:
