@@ -15,9 +15,9 @@ mod r#async;
 pub use self::r#async::Bme280 as AsyncBme280;
 
 #[cfg(feature = "blocking")]
-mod bme280;
+mod blocking;
 #[cfg(feature = "blocking")]
-pub use self::bme280::Bme280;
+pub use self::blocking::Bme280;
 
 #[cfg(any(feature = "async", feature = "blocking"))]
 mod calibration;
