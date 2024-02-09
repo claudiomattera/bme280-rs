@@ -130,9 +130,11 @@ steps:
     - promote
     target:
     - crates.io
-  image: docker.claudiomattera.it/claudiomattera/rust:1
+  image: docker-proxy.claudiomattera.it/library/rust:1
   commands:
-  - just publish
+  - cargo login "${CRATES_IO_TOKEN}"
+  - cargo publish
+  - cargo logout
 
 ---
 kind: pipeline
