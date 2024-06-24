@@ -10,13 +10,16 @@ repository = "https://gitlab.com/claudiomattera/bme280-rs"
 license = "MIT OR Apache-2.0"
 rust-version = "1.75"
 keywords = [
-    "sensor",
-    "i2c",
+    "async",
     "embedded-hal",
+    "i2c",
+    "sensor",
 ]
 categories = [
+    "asynchronous",
     "embedded",
     "no-std",
+    "no-std::no-alloc",
 ]
 publish = true
 exclude = [
