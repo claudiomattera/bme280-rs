@@ -67,8 +67,8 @@ missing_docs = "deny"
 
 [lints.clippy]
 # Categories
-cargo = "deny"
-pedantic = "deny"
+cargo = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
 
 # Individuals
 alloc_instead_of_core = "deny"
@@ -78,6 +78,7 @@ else_if_without_else = "deny"
 expect_used = "deny"
 format_push_string = "deny"
 if_then_some_else_none = "deny"
+incompatible_msrv = "deny"
 let_underscore_must_use = "deny"
 lossy_float_literal = "deny"
 missing_docs_in_private_items = "deny"
