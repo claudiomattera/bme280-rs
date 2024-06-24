@@ -60,6 +60,8 @@ bme280.set_sampling_configuration(
         .with_sensor_mode(SensorMode::Normal)
 )?;
 
+delay.delay_ms(10);
+
 if let Some(temperature) = bme280.read_temperature()? {
     println!("Temperature: {} C", temperature);
 } else {
@@ -87,6 +89,8 @@ bme280.set_sampling_configuration(
         .with_humidity_oversampling(Oversampling::Oversample1)
         .with_sensor_mode(SensorMode::Normal)
 ).await?;
+
+delay.delay_ms(10).await;
 
 if let Some(temperature) = bme280.read_temperature().await? {
     println!("Temperature: {} C", temperature);
