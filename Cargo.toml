@@ -37,12 +37,18 @@ async = ["dep:embedded-hal-async"]
 uom = ["dep:uom"]
 
 [dependencies]
+# Logging
 log = { version = "0.4", default-features = false }
+
+# Hardware Abstraction Layer (HAL)
 embedded-hal = { version = "1", default-features = false, optional = true }
 embedded-hal-async = { version = "1", default-features = false, optional = true }
+
+# Unit of measurement
 uom = { version = "0.33", default-features = false, features = ["f32", "si"], optional = true }
 
 [dev-dependencies]
+# Hardware Abstraction Layer (HAL) mock
 embedded-hal-mock = { version = "0.10", default-features = false, features = ["eh1", "embedded-hal-async"] }
 
 [lints.rust]
