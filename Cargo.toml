@@ -1,6 +1,6 @@
 [package]
 name = "bme280-rs"
-version = "0.3.0-dev"
+version = "0.3.0"
 authors = ["Claudio Mattera <dev@claudiomattera.it>"]
 edition = "2021"
 description = "A crate to query BME280 sensors over I²C"
