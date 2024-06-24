@@ -87,6 +87,8 @@ if let Some(temperature) = bme280.read_temperature().await? {
 }
 ~~~~
 
+See the [examples](./examples) for more information.
+
 
 Unit of Measurements
 ----

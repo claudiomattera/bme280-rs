@@ -132,6 +132,8 @@ steps:
     - crates.io
   image: docker-proxy.claudiomattera.it/library/rust:1
   commands:
+  - apt-get update
+  - apt-get install --yes --no-install-recommends libftdi1-dev
   - cargo login "${CRATES_IO_TOKEN}"
   - cargo publish
   - cargo logout

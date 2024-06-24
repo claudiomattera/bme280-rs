@@ -36,6 +36,10 @@ blocking = ["dep:embedded-hal"]
 async = ["dep:embedded-hal-async"]
 uom = ["dep:uom"]
 
+[[example]]
+name = "single"
+required-features = ["blocking", "uom"]
+
 [dependencies]
 # Logging
 log = { version = "0.4", default-features = false }
@@ -48,8 +52,15 @@ embedded-hal-async = { version = "1", default-features = false, optional = true 
 uom = { version = "0.33", default-features = false, features = ["f32", "si"], optional = true }
 
 [dev-dependencies]
+# Logging
+env_logger = { version = "0.11", default-features = false, features = ["auto-color"] }
+
 # Hardware Abstraction Layer (HAL) mock
 embedded-hal-mock = { version = "0.10", default-features = false, features = ["eh1", "embedded-hal-async"] }
+
+# Hardware Abstraction Layer (HAL)
+ftdi-embedded-hal = { version = "0.22", default-features = false, features = ["libftd2xx", "libftd2xx-static"] }
+ftdi = { version = "0.1", default-features = false }
 
 [lints.rust]
 missing_docs = "deny"
