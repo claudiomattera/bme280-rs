@@ -8,24 +8,39 @@
 
 //! Data types and functions for BME280 sensor interface
 
-use log::{debug, warn};
+use log::debug;
+use log::warn;
 
 use embedded_hal::delay::DelayNs;
 use embedded_hal::i2c::I2c;
 
 use crate::calibration;
-use crate::constants::{
-    BME280_COMMAND_SOFTRESET, BME280_REGISTER_CHIPID, BME280_REGISTER_CONFIG,
-    BME280_REGISTER_CONTROL, BME280_REGISTER_CONTROLHUMID, BME280_REGISTER_HUMIDDATA,
-    BME280_REGISTER_PRESSUREDATA, BME280_REGISTER_SOFTRESET, BME280_REGISTER_STATUS,
-    BME280_REGISTER_TEMPDATA, DEFAULT_ADDRESS, MODE_SLEEP, SKIPPED_HUMIDITY_OUTPUT,
-    SKIPPED_PRESSURE_OUTPUT, SKIPPED_TEMPERATURE_OUTPUT,
-};
-use crate::sample::{
-    humidity_from_number, pressure_from_pascal, temperature_from_celsius, Humidity, Pressure,
-    RawSample, Sample, Temperature,
-};
-use crate::{CalibrationData, Configuration, Status};
+use crate::constants::BME280_COMMAND_SOFTRESET;
+use crate::constants::BME280_REGISTER_CHIPID;
+use crate::constants::BME280_REGISTER_CONFIG;
+use crate::constants::BME280_REGISTER_CONTROL;
+use crate::constants::BME280_REGISTER_CONTROLHUMID;
+use crate::constants::BME280_REGISTER_HUMIDDATA;
+use crate::constants::BME280_REGISTER_PRESSUREDATA;
+use crate::constants::BME280_REGISTER_SOFTRESET;
+use crate::constants::BME280_REGISTER_STATUS;
+use crate::constants::BME280_REGISTER_TEMPDATA;
+use crate::constants::DEFAULT_ADDRESS;
+use crate::constants::MODE_SLEEP;
+use crate::constants::SKIPPED_HUMIDITY_OUTPUT;
+use crate::constants::SKIPPED_PRESSURE_OUTPUT;
+use crate::constants::SKIPPED_TEMPERATURE_OUTPUT;
+use crate::sample::humidity_from_number;
+use crate::sample::pressure_from_pascal;
+use crate::sample::temperature_from_celsius;
+use crate::sample::Humidity;
+use crate::sample::Pressure;
+use crate::sample::RawSample;
+use crate::sample::Sample;
+use crate::sample::Temperature;
+use crate::CalibrationData;
+use crate::Configuration;
+use crate::Status;
 
 /// Interface to BME280 sensor over I²C
 ///
@@ -573,7 +588,8 @@ mod tests {
     use embedded_hal::i2c::ErrorKind;
 
     use embedded_hal_mock::eh1::delay::NoopDelay as DelayMock;
-    use embedded_hal_mock::eh1::i2c::{Mock as I2cMock, Transaction as I2cTransaction};
+    use embedded_hal_mock::eh1::i2c::Mock as I2cMock;
+    use embedded_hal_mock::eh1::i2c::Transaction as I2cTransaction;
 
     use crate::calibration::TEST_CALIBRATION_DATA;
     use crate::constants::CHIP_ID;

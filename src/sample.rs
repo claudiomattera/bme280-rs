@@ -9,14 +9,17 @@
 //! Data types and functions for BME280 sensor samples
 
 #[cfg(feature = "uom")]
-use uom::si::{
-    f32::{
-        Pressure as UomPressure, Ratio as UomHumidity, ThermodynamicTemperature as UomTemperature,
-    },
-    pressure::pascal,
-    ratio::percent,
-    thermodynamic_temperature::degree_celsius,
-};
+use uom::si::f32::Pressure as UomPressure;
+#[cfg(feature = "uom")]
+use uom::si::f32::Ratio as UomHumidity;
+#[cfg(feature = "uom")]
+use uom::si::f32::ThermodynamicTemperature as UomTemperature;
+#[cfg(feature = "uom")]
+use uom::si::pressure::pascal;
+#[cfg(feature = "uom")]
+use uom::si::ratio::percent;
+#[cfg(feature = "uom")]
+use uom::si::thermodynamic_temperature::degree_celsius;
 
 #[cfg(feature = "uom")]
 /// Type for temperature measurements

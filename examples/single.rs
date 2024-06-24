@@ -17,13 +17,20 @@ use log::info;
 use embedded_hal::delay::DelayNs as _;
 use embedded_hal::i2c::I2c;
 
-use ftdi_embedded_hal::{Delay, FtHal};
+use ftdi_embedded_hal::Delay;
+use ftdi_embedded_hal::FtHal;
 
-use ftdi::{find_by_vid_pid, Interface as FtdiInterface};
+use ftdi::find_by_vid_pid;
+use ftdi::Interface as FtdiInterface;
 
-use uom::si::{pressure::hectopascal, ratio::percent, thermodynamic_temperature::degree_celsius};
+use uom::si::pressure::hectopascal;
+use uom::si::ratio::percent;
+use uom::si::thermodynamic_temperature::degree_celsius;
 
-use bme280_rs::{Bme280, Configuration, Oversampling, SensorMode};
+use bme280_rs::Bme280;
+use bme280_rs::Configuration;
+use bme280_rs::Oversampling;
+use bme280_rs::SensorMode;
 
 /// Main entry point
 fn main() -> Result<(), Box<dyn Error>> {

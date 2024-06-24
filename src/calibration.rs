@@ -89,8 +89,8 @@ impl From<&[u8; TOTAL_LENGTH]> for CalibrationData {
             dig_h1: data[25],
             dig_h2: i16::from_le_bytes([data[26], data[27]]),
             dig_h3: data[28],
-            dig_h4: i16::from(data[29]) << 4 | i16::from(data[30]) & 0xF,
-            dig_h5: ((i16::from(data[30]) & 0xF0) >> 4) | (i16::from(data[31]) << 4),
+            dig_h4: i16::from(data[29]) << 4 | i16::from(data[30]) & 0xf,
+            dig_h5: ((i16::from(data[30]) & 0xf0) >> 4) | (i16::from(data[31]) << 4),
             dig_h6,
         }
     }

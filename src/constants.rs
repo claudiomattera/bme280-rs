@@ -15,26 +15,26 @@ pub const DEFAULT_ADDRESS: u8 = 0x76;
 pub const CHIP_ID: u8 = 0x60;
 
 /// I²C register for chip ID
-pub(crate) const BME280_REGISTER_CHIPID: u8 = 0xD0;
+pub(crate) const BME280_REGISTER_CHIPID: u8 = 0xd0;
 /// I²C register for soft reset
-pub(crate) const BME280_REGISTER_SOFTRESET: u8 = 0xE0;
+pub(crate) const BME280_REGISTER_SOFTRESET: u8 = 0xe0;
 /// I²C register for humidity configuration
-pub(crate) const BME280_REGISTER_CONTROLHUMID: u8 = 0xF2;
+pub(crate) const BME280_REGISTER_CONTROLHUMID: u8 = 0xf2;
 /// I²C register for chip status
-pub(crate) const BME280_REGISTER_STATUS: u8 = 0xF3;
+pub(crate) const BME280_REGISTER_STATUS: u8 = 0xf3;
 /// I²C register for chip control
-pub(crate) const BME280_REGISTER_CONTROL: u8 = 0xF4;
+pub(crate) const BME280_REGISTER_CONTROL: u8 = 0xf4;
 /// I²C register for chip configuration
-pub(crate) const BME280_REGISTER_CONFIG: u8 = 0xF5;
+pub(crate) const BME280_REGISTER_CONFIG: u8 = 0xf5;
 /// I²C register for pressure data
-pub(crate) const BME280_REGISTER_PRESSUREDATA: u8 = 0xF7;
+pub(crate) const BME280_REGISTER_PRESSUREDATA: u8 = 0xf7;
 /// I²C register for temperature data
-pub(crate) const BME280_REGISTER_TEMPDATA: u8 = 0xFA;
+pub(crate) const BME280_REGISTER_TEMPDATA: u8 = 0xfa;
 /// I²C register for humidity data
-pub(crate) const BME280_REGISTER_HUMIDDATA: u8 = 0xFD;
+pub(crate) const BME280_REGISTER_HUMIDDATA: u8 = 0xfd;
 
 /// Command for soft reset
-pub(crate) const BME280_COMMAND_SOFTRESET: u8 = 0xB6;
+pub(crate) const BME280_COMMAND_SOFTRESET: u8 = 0xb6;
 
 /// Bitmask for sleep mode
 pub(crate) const MODE_SLEEP: u8 = 0b00;
