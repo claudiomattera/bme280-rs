@@ -51,26 +51,32 @@ steps:
   commands:
   - just check-format
 
-- name: run linter
+- name: run linter for all feature combinations
   failure: ignore
   image: docker.claudiomattera.it/claudiomattera/rust:1
   commands:
-  - just lint
+  - just lint-all-feature-combinations
 
-- name: build
+- name: build for all feature combinations
   image: docker.claudiomattera.it/claudiomattera/rust:1
   commands:
-  - just build
+  - apt-get update
+  - apt-get install --yes --no-install-recommends libftdi1-dev
+  - just build-all-feature-combinations
 
-- name: build tests
+- name: build tests for all feature combinations
   image: docker.claudiomattera.it/claudiomattera/rust:1
   commands:
-  - just build-tests
+  - apt-get update
+  - apt-get install --yes --no-install-recommends libftdi1-dev
+  - just build-tests-all-feature-combinations
 
-- name: test
+- name: test for all feature combinations
   image: docker.claudiomattera.it/claudiomattera/rust:1
   commands:
-  - just test
+  - apt-get update
+  - apt-get install --yes --no-install-recommends libftdi1-dev
+  - just test-all-feature-combinations
 
 - name: build documentation
   image: docker.claudiomattera.it/claudiomattera/rust:1
@@ -132,6 +138,8 @@ steps:
     - crates.io
   image: docker-proxy.claudiomattera.it/library/rust:1
   commands:
+  - apt-get update
+  - apt-get install --yes --no-install-recommends libftdi1-dev
   - cargo login "${CRATES_IO_TOKEN}"
   - cargo publish
   - cargo logout

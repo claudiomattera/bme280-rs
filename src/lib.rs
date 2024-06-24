@@ -27,16 +27,32 @@ use self::calibration::CalibrationData;
 #[cfg(any(feature = "async", feature = "blocking"))]
 mod configuration;
 #[cfg(any(feature = "async", feature = "blocking"))]
-pub use self::configuration::{
-    Configuration, Filter, Oversampling, SensorMode, StandbyTime, Status,
-};
+pub use self::configuration::Configuration;
+#[cfg(any(feature = "async", feature = "blocking"))]
+pub use self::configuration::Filter;
+#[cfg(any(feature = "async", feature = "blocking"))]
+pub use self::configuration::Oversampling;
+#[cfg(any(feature = "async", feature = "blocking"))]
+pub use self::configuration::SensorMode;
+#[cfg(any(feature = "async", feature = "blocking"))]
+pub use self::configuration::StandbyTime;
+#[cfg(any(feature = "async", feature = "blocking"))]
+pub use self::configuration::Status;
 
 #[cfg(any(feature = "async", feature = "blocking"))]
 mod constants;
 #[cfg(any(feature = "async", feature = "blocking"))]
-pub use self::constants::{CHIP_ID, DEFAULT_ADDRESS};
+pub use self::constants::CHIP_ID;
+#[cfg(any(feature = "async", feature = "blocking"))]
+pub use self::constants::DEFAULT_ADDRESS;
 
 #[cfg(any(feature = "async", feature = "blocking"))]
 mod sample;
 #[cfg(any(feature = "async", feature = "blocking"))]
-pub use self::sample::{Humidity, Pressure, Sample, Temperature};
+pub use self::sample::Humidity;
+#[cfg(any(feature = "async", feature = "blocking"))]
+pub use self::sample::Pressure;
+#[cfg(any(feature = "async", feature = "blocking"))]
+pub use self::sample::Sample;
+#[cfg(any(feature = "async", feature = "blocking"))]
+pub use self::sample::Temperature;

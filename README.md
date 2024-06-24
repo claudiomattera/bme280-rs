@@ -2,10 +2,10 @@ Rust BME280 Crate
 ====
 
 ![Version](https://img.shields.io/crates/v/bme280-rs)
-![Documentation](https://img.shields.io/docsrs/bme280-rs/0.2.0)
-![Downloads](https://img.shields.io/crates/dv/bme280-rs/0.2.0)
-![License](https://img.shields.io/crates/l/bme280-rs/0.2.0)
-![MSRV](https://img.shields.io/crates/msrv/bme280-rs/0.2.0)
+![Documentation](https://img.shields.io/docsrs/bme280-rs/0.3.0)
+![Downloads](https://img.shields.io/crates/dv/bme280-rs/0.3.0)
+![License](https://img.shields.io/crates/l/bme280-rs/0.3.0)
+![MSRV](https://img.shields.io/crates/msrv/bme280-rs/0.3.0)
 
 A Rust crate to query temperature, pressure and humidity from sensor [BME280]
 
@@ -13,7 +13,7 @@ A Rust crate to query temperature, pressure and humidity from sensor [BME280]
 
 [BME280]: https://www.bosch-sensortec.com/products/environmental-sensors/humidity-sensors-bme280/
 
-This crate support both [`embedded-hal`][embedded-hal] and [`embedded-hal-async`][embedded-hal-async].
+This crate supports both [`embedded-hal`][embedded-hal] and [`embedded-hal-async`][embedded-hal-async].
 
 [embedded-hal]: https://crates.io/crates/embedded-hal
 [embedded-hal-async]: https://crates.io/crates/embedded-hal-async
@@ -28,8 +28,16 @@ Add the dependency to `Cargo.toml`.
 
 ~~~~toml
 [dependencies.bme280-rs]
-version = "0.2.0"
+version = "0.3.0"
 ~~~~
+
+Optionally enable the desired features.
+
+| Feature              | Description                              |
+|----------------------|------------------------------------------|
+| `blocking` (default) | Enable the blocking sensor `Bme280`      |
+| `async` (default)    | Enable the async sensor `AsyncBme280`    |
+| `uom`                | Use `uom` for measurement types          |
 
 A `Bme280` structure can be created from an I²C interface and a delay function.
 The initial sampling configuration disables all measurements, so it is necessary to reconfigure the chip with the desired settings before read samples.
@@ -52,6 +60,8 @@ bme280.set_sampling_configuration(
         .with_sensor_mode(SensorMode::Normal)
 )?;
 
+delay.delay_ms(10);
+
 if let Some(temperature) = bme280.read_temperature()? {
     println!("Temperature: {} C", temperature);
 } else {
@@ -60,7 +70,7 @@ if let Some(temperature) = bme280.read_temperature()? {
 ~~~~
 
 An `AsyncBme280` structure can be used with asynchronous HALs.
-Its API is completely identical to `Bme280`, just with `.async` at the end of function calls.
+Its API is completely identical to `Bme280`, just with `.await` at the end of function calls.
 
 ~~~~rust
 use bme280_rs::{AsyncBme280, Configuration, Oversampling, SensorMode};
@@ -80,12 +90,16 @@ bme280.set_sampling_configuration(
         .with_sensor_mode(SensorMode::Normal)
 ).await?;
 
+delay.delay_ms(10).await;
+
 if let Some(temperature) = bme280.read_temperature().await? {
     println!("Temperature: {} C", temperature);
 } else {
     println!("Temperature reading was disabled");
 }
 ~~~~
+
+See the [examples](./examples) for more information.
 
 
 Unit of Measurements

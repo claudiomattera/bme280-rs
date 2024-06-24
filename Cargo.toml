@@ -1,6 +1,6 @@
 [package]
 name = "bme280-rs"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Claudio Mattera <dev@claudiomattera.it>"]
 edition = "2021"
 description = "A crate to query BME280 sensors over I²C"
@@ -10,13 +10,16 @@ repository = "https://gitlab.com/claudiomattera/bme280-rs"
 license = "MIT OR Apache-2.0"
 rust-version = "1.75"
 keywords = [
-    "sensor",
-    "i2c",
+    "async",
     "embedded-hal",
+    "i2c",
+    "sensor",
 ]
 categories = [
+    "asynchronous",
     "embedded",
     "no-std",
+    "no-std::no-alloc",
 ]
 publish = true
 exclude = [
@@ -33,22 +36,39 @@ blocking = ["dep:embedded-hal"]
 async = ["dep:embedded-hal-async"]
 uom = ["dep:uom"]
 
+[[example]]
+name = "single"
+required-features = ["blocking", "uom"]
+
 [dependencies]
+# Logging
 log = { version = "0.4", default-features = false }
+
+# Hardware Abstraction Layer (HAL)
 embedded-hal = { version = "1", default-features = false, optional = true }
 embedded-hal-async = { version = "1", default-features = false, optional = true }
-uom = { version = "0.33", default-features = false, features = ["f32", "si"], optional = true }
+
+# Unit of measurement
+uom = { version = "0.36", default-features = false, features = ["f32", "si"], optional = true }
 
 [dev-dependencies]
-embedded-hal-mock = { version = "0.10", default-features = false, features = ["eh1", "embedded-hal-async"] }
+# Logging
+env_logger = { version = "0.11", default-features = false, features = ["auto-color"] }
+
+# Hardware Abstraction Layer (HAL) mock
+embedded-hal-mock = { version = "0.11", default-features = false, features = ["eh1", "embedded-hal-async"] }
+
+# Hardware Abstraction Layer (HAL)
+ftdi-embedded-hal = { version = "0.22", default-features = false, features = ["libftd2xx", "libftd2xx-static"] }
+ftdi = { version = "0.1", default-features = false }
 
 [lints.rust]
 missing_docs = "deny"
 
 [lints.clippy]
 # Categories
-cargo = "deny"
-pedantic = "deny"
+cargo = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
 
 # Individuals
 alloc_instead_of_core = "deny"
@@ -58,6 +78,7 @@ else_if_without_else = "deny"
 expect_used = "deny"
 format_push_string = "deny"
 if_then_some_else_none = "deny"
+incompatible_msrv = "deny"
 let_underscore_must_use = "deny"
 lossy_float_literal = "deny"
 missing_docs_in_private_items = "deny"

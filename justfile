@@ -9,6 +9,14 @@ default:
 cargo +args:
     cargo {{args}}
 
+# Generate Cargo.lock
+generate-lockfile:
+    @just cargo generate-lockfile --offline
+
+# Update Cargo.lock
+update-lockfile:
+    @just cargo update
+
 # Fetch dependencies
 fetch:
     @just cargo fetch
@@ -25,25 +33,49 @@ format: fetch
 check +args='--all-features': fetch
     @just cargo check --frozen --all-targets {{args}}
 
+# Type-check source code for all feature combinations
+check-all-feature-combinations: fetch
+    @just cargo hack --feature-powerset --no-dev-deps check
+
 # Check lints with Clippy
 lint +args='--all-features': (check args)
     @just cargo clippy --frozen --all-targets {{args}}
 
-# Build
+# Check lints with Clippy for all feature combinations
+lint-all-feature-combinations: (check-all-feature-combinations)
+    @just cargo hack --feature-powerset --no-dev-deps clippy
+
+# Build debug
 build +args='--all-features': fetch
-    @just cargo build --frozen {{args}}
+    @just cargo build --frozen --all-targets {{args}}
+
+# Build for all feature combinations
+build-all-feature-combinations: (check-all-feature-combinations)
+    @just cargo hack --feature-powerset --no-dev-deps build
 
 # Build tests
 build-tests +args='--all-features': fetch
     @just cargo test --frozen {{args}} --no-run
 
+# Build tests for all feature combinations
+build-tests-all-feature-combinations: (build-all-feature-combinations)
+    @just cargo hack --feature-powerset test --no-run
+
 # Run tests
 test +args='--all-features': (build-tests args)
     @just cargo test --frozen {{args}}
 
+# Run tests for all feature combinations
+test-all-feature-combinations: (build-tests-all-feature-combinations)
+    @just cargo hack --feature-powerset test
+
+# Run an example
+run-example *args: (build "--all-features")
+    @just cargo run --frozen --all-features --example {{ args }}
+
 # Build documentation
 build-documentation +args='--all-features': fetch
-    @just cargo doc --frozen {{ args }}
+    @just cargo doc --frozen --no-deps --document-private-items {{args}}
 
 # Clean
 clean:

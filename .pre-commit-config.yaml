@@ -37,13 +37,13 @@ repos:
         name: check crate structure
 
 -   repo: https://github.com/gitleaks/gitleaks
-    rev: v8.18.1
+    rev: v8.18.4
     hooks:
     -   id: gitleaks
         name: detect secrets
 
 -   repo: https://github.com/crate-ci/typos
-    rev: v1.17.1
+    rev: v1.22.9
     hooks:
     -   id: typos
         name: check spelling
