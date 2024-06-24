@@ -13,7 +13,7 @@ A Rust crate to query temperature, pressure and humidity from sensor [BME280]
 
 [BME280]: https://www.bosch-sensortec.com/products/environmental-sensors/humidity-sensors-bme280/
 
-This crate support both [`embedded-hal`][embedded-hal] and [`embedded-hal-async`][embedded-hal-async].
+This crate supports both [`embedded-hal`][embedded-hal] and [`embedded-hal-async`][embedded-hal-async].
 
 [embedded-hal]: https://crates.io/crates/embedded-hal
 [embedded-hal-async]: https://crates.io/crates/embedded-hal-async
@@ -60,7 +60,7 @@ if let Some(temperature) = bme280.read_temperature()? {
 ~~~~
 
 An `AsyncBme280` structure can be used with asynchronous HALs.
-Its API is completely identical to `Bme280`, just with `.async` at the end of function calls.
+Its API is completely identical to `Bme280`, just with `.await` at the end of function calls.
 
 ~~~~rust
 use bme280_rs::{AsyncBme280, Configuration, Oversampling, SensorMode};
