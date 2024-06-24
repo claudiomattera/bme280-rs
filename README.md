@@ -31,6 +31,14 @@ Add the dependency to `Cargo.toml`.
 version = "0.3.0"
 ~~~~
 
+Optionally enable the desired features.
+
+| Feature              | Description                              |
+|----------------------|------------------------------------------|
+| `blocking` (default) | Enable the blocking sensor `Bme280`      |
+| `async` (default)    | Enable the async sensor `AsyncBme280`    |
+| `uom`                | Use `uom` for measurement types          |
+
 A `Bme280` structure can be created from an I²C interface and a delay function.
 The initial sampling configuration disables all measurements, so it is necessary to reconfigure the chip with the desired settings before read samples.
 
