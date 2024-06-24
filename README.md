@@ -2,10 +2,10 @@ Rust BME280 Crate
 ====
 
 ![Version](https://img.shields.io/crates/v/bme280-rs)
-![Documentation](https://img.shields.io/docsrs/bme280-rs/0.2.0)
-![Downloads](https://img.shields.io/crates/dv/bme280-rs/0.2.0)
-![License](https://img.shields.io/crates/l/bme280-rs/0.2.0)
-![MSRV](https://img.shields.io/crates/msrv/bme280-rs/0.2.0)
+![Documentation](https://img.shields.io/docsrs/bme280-rs/0.3.0)
+![Downloads](https://img.shields.io/crates/dv/bme280-rs/0.3.0)
+![License](https://img.shields.io/crates/l/bme280-rs/0.3.0)
+![MSRV](https://img.shields.io/crates/msrv/bme280-rs/0.3.0)
 
 A Rust crate to query temperature, pressure and humidity from sensor [BME280]
 
@@ -28,7 +28,7 @@ Add the dependency to `Cargo.toml`.
 
 ~~~~toml
 [dependencies.bme280-rs]
-version = "0.2.0"
+version = "0.3.0"
 ~~~~
 
 A `Bme280` structure can be created from an I²C interface and a delay function.
